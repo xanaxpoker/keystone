@@ -66,7 +66,8 @@ Application::Application(int& argc, char** argv)
 #endif
 
     // Build identifier
-    auto identifier = QStringLiteral("keepassxc");
+    // Isolate the fork from upstream file-open and lock messages.
+    auto identifier = QStringLiteral("keystone");
     auto username = Tools::cleanUsername();
     if (!username.isEmpty()) {
         identifier += QChar('-') + username;

@@ -13,3 +13,5 @@ Three-column vault / entries / details layout, vertically arranged credential fi
 The macOS workflow builds separately on native ARM64 and x86_64 runners using pinned vcpkg dependencies. It runs upstream tests before creating ad-hoc signed DMGs. Those builds are development previews, not Developer ID signed/notarized releases. Browser integration and hardware unlock require separate end-to-end verification after rebranding. Automatic upstream update checks are disabled for the fork.
 
 Local checkout: /Applications/sidetabs/Coding/keystone
+
+Keystone uses separate single-instance and browser IPC endpoint names so the fork can run alongside KeePassXC. The browser message format, pairing and encryption remain upstream implementations.

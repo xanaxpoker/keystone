@@ -29,7 +29,7 @@ namespace BrowserShared
 {
     QString localServerPath()
     {
-        const auto serverName = QStringLiteral("/org.keepassxc.KeePassXC.BrowserServer");
+        const auto serverName = QStringLiteral("/app.keystone.passwords.BrowserServer");
 #if defined(KEEPASSXC_DIST_SNAP)
         return QProcessEnvironment::systemEnvironment().value("SNAP_USER_COMMON") + serverName;
 #elif defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
