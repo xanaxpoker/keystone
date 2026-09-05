@@ -63,6 +63,9 @@ EntryPreviewWidget::EntryPreviewWidget(QWidget* parent)
     m_ui->entryUsernameLabel->setAlignment(Qt::AlignRight);
     m_ui->entryPasswordLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     m_ui->entryUrlTitleLabel->setText(tr("Website"));
+    m_ui->entryUrlTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    m_ui->entryUrlLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    m_ui->entryNotesTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     m_ui->entryGeneralWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     m_ui->entryNotesTextEdit->setMaximumHeight(90);
     auto moreMenu = new QMenu(this);
@@ -196,6 +199,7 @@ void EntryPreviewWidget::clear()
 void EntryPreviewWidget::setEntry(Entry* selectedEntry)
 {
     if (m_currentEntry == selectedEntry) {
+        refresh();
         return;
     }
 
@@ -226,6 +230,7 @@ void EntryPreviewWidget::setEntry(Entry* selectedEntry)
 void EntryPreviewWidget::setGroup(Group* selectedGroup)
 {
     if (m_currentGroup == selectedGroup) {
+        refresh();
         return;
     }
 

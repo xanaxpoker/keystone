@@ -68,3 +68,8 @@ QSplitter::handle { background: #E5E3DE; width: 1px; height: 1px; }
 QTreeView#groupView, QListView#tagView { background: #F3F2EF; color: #272925; border: none; }
 QTreeView#groupView::item, QListView#tagView::item { padding: 5px; border-radius: 5px; }
 QTreeView#groupView::item:selected, QListView#tagView::item:selected { background: #DDDFD7; color: #272925; }
+
+QWidget#entryGeneralWidget QLabel#entryUsernameTitleLabel, QWidget#entryGeneralWidget QLabel#entryPasswordTitleLabel,
+QWidget#entryGeneralWidget QLabel#entryUrlTitleLabel, QWidget#entryGeneralWidget QLabel#entryNotesTitleLabel { font-weight: normal; }
+QToolButton#keystoneMore::menu-indicator { image: none; }
+QToolButton#keystoneVaultButton::menu-indicator { image: none; }

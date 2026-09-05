@@ -84,7 +84,9 @@ SearchWidget::SearchWidget(QWidget* parent)
     m_ui->searchEdit->setPlaceholderText(tr("Search passwords"));
     m_ui->helpIcon->setVisible(false);
     m_ui->helpIcon->setIcon(icons()->icon("system-help"));
-    m_ui->searchEdit->addAction(m_ui->helpIcon, QLineEdit::TrailingPosition);
+    m_searchMenu->addSeparator();
+    m_searchMenu->addAction(m_ui->helpIcon);
+    m_ui->helpIcon->setVisible(true);
 
     m_ui->saveIcon->setIcon(icons()->icon("document-save"));
     m_ui->searchEdit->addAction(m_ui->saveIcon, QLineEdit::TrailingPosition);

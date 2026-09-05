@@ -181,6 +181,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     vaultButton->setPopupMode(QToolButton::InstantPopup);
     auto vaultMenu = new QMenu(vaultButton);
     auto foldersAction = vaultMenu->addAction(tr("Folders and saved searches"));
+    foldersAction->setObjectName("keystoneShowFolders");
     foldersAction->setCheckable(true);
     vaultMenu->addAction(tr("Vault settings…"), this, SLOT(switchToDatabaseSettings()));
     vaultMenu->addAction(tr("Security report…"), this, SLOT(switchToDatabaseReports()));
@@ -223,7 +224,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     m_mainSplitter->setSizes({240, 960});
 
     m_previewSplitter->setOrientation(Qt::Horizontal);
-    m_previewSplitter->setChildrenCollapsible(true);
+    m_previewSplitter->setChildrenCollapsible(false);
 
     m_groupView->setObjectName("groupView");
     m_groupView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -250,7 +251,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     m_previewView->setObjectName("previewWidget");
     m_previewView->setMinimumWidth(360);
     m_entryView->setMinimumWidth(250);
-    m_previewView->hide();
+    m_previewView->setGroup(m_db->rootGroup());
     auto entryPane = new QWidget(this);
     entryPane->setObjectName("keystoneEntryPane");
     auto entryLayout = new QVBoxLayout(entryPane);

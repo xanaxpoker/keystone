@@ -140,8 +140,7 @@ void TestGuiBrowser::testEntrySettings()
     clickIndex(entryItem, entryView, Qt::LeftButton);
 
     auto* entryEditAction = m_mainWindow->findChild<QAction*>("actionEntryEdit");
-    QWidget* entryEditWidget = toolBar->widgetForAction(entryEditAction);
-    QTest::mouseClick(entryEditWidget, Qt::LeftButton);
+    entryEditAction->trigger();
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::EditEntryMode);
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
 
@@ -184,8 +183,7 @@ void TestGuiBrowser::testAdditionalURLs()
     clickIndex(entryItem, entryView, Qt::LeftButton);
 
     auto* entryEditAction = m_mainWindow->findChild<QAction*>("actionEntryEdit");
-    QWidget* entryEditWidget = toolBar->widgetForAction(entryEditAction);
-    QTest::mouseClick(entryEditWidget, Qt::LeftButton);
+    entryEditAction->trigger();
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::EditEntryMode);
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
 

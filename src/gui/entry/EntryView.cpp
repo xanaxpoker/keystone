@@ -290,7 +290,7 @@ void EntryView::displayGroup(Group* group)
 void EntryView::displaySearch(const QList<Entry*>& entries)
 {
     m_model->setEntries(entries);
-    header()->showSection(EntryModel::ParentGroup);
+    header()->hideSection(EntryModel::ParentGroup);
 
     setFirstEntryActive();
 
@@ -535,7 +535,7 @@ void EntryView::resetViewToDefaults()
 {
     // Reduce number of columns that are shown by default
     if (m_inSearchMode) {
-        header()->showSection(EntryModel::ParentGroup);
+        header()->hideSection(EntryModel::ParentGroup);
     } else {
         header()->hideSection(EntryModel::ParentGroup);
     }
@@ -588,6 +588,16 @@ void EntryView::onHeaderChanged()
     m_model->setBackgroundColorVisible(isColumnHidden(EntryModel::Color));
     // Force hide accessed column
     header()->hideSection(EntryModel::Accessed);
+}
+
+void EntryView::resizeEvent(QResizeEvent* event)
+{
+    QTreeView::resizeEvent(event);
+    // The default single-column list tracks its viewport. Advanced columns keep
+    // their existing user-controlled widths.
+    if (header()->count() - header()->hiddenSectionCount() == 1) {
+        header()->resizeSection(EntryModel::Title, viewport()->width());
+    }
 }
 
 void EntryView::showEvent(QShowEvent* event)

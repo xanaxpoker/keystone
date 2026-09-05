@@ -147,7 +147,10 @@ void TestGui::init()
 
     QTRY_VERIFY(!m_dbWidget->isLocked());
     m_db = m_dbWidget->database();
-
+    // Group operation tests use the explicit advanced sidebar disclosure.
+    auto* folders = m_dbWidget->findChild<QAction*>("keystoneShowFolders");
+    QVERIFY(folders);
+    folders->setChecked(true);
     QApplication::processEvents();
 }
 
@@ -172,6 +175,8 @@ void TestGui::cleanupTestCase()
 
 void TestGui::testKeystoneLayout()
 {
+    auto* folders = m_dbWidget->findChild<QAction*>("keystoneShowFolders");
+    folders->setChecked(false);
     const auto originalSize = m_mainWindow->size();
     const auto originalTheme = config()->get(Config::GUI_ApplicationTheme);
     auto* view = m_dbWidget->findChild<EntryView*>("entryView");
@@ -207,6 +212,7 @@ void TestGui::testKeystoneLayout()
         config()->set(Config::GUI_ApplicationTheme, theme);
         qobject_cast<Application*>(qApp)->applyTheme();
         m_mainWindow->resize(1180, 840);
+        m_dbWidget->setSplitterSizes({{Config::GUI_SplitterState, {}}, {Config::GUI_PreviewSplitterState, {}}});
         QApplication::processEvents();
         // The entry and detail panes must be side by side, not overlap or stack.
         QVERIFY(preview->mapTo(m_mainWindow.data(), QPoint()).x()
@@ -218,6 +224,21 @@ void TestGui::testKeystoneLayout()
             QVERIFY(m_mainWindow->grab().save(captureDir + "/Keystone-" + theme + ".png"));
         }
     }
+    // Core simplified navigation, and field copy through the existing clipboard path.
+    entry->addTag("Favorite");
+    auto* favorites = m_dbWidget->findChild<QPushButton*>("collection1");
+    QVERIFY(favorites);
+    QTest::mouseClick(favorites, Qt::LeftButton);
+    QTRY_COMPARE(view->model()->rowCount(), 1);
+    QCOMPARE(view->entryFromIndex(view->model()->index(0, EntryModel::Title)), entry);
+    auto* searchEdit = m_mainWindow->findChild<SearchWidget*>("SearchWidget")->findChild<QLineEdit*>("searchEdit");
+    QVERIFY(searchEdit->text().isEmpty());
+    clickIndex(view->indexFromEntry(entry), view, Qt::LeftButton);
+    auto* copyButton = preview->findChild<QToolButton*>("keystoneCopyPassword");
+    QVERIFY(copyButton);
+    QTest::mouseClick(copyButton, Qt::LeftButton);
+    QTRY_COMPARE(QApplication::clipboard()->text(), QString("fixture-password-only"));
+    QCOMPARE(password->text(), QString(QChar(0x25cf)).repeated(6));
     config()->set(Config::GUI_HideUsernames, true);
     QCOMPARE(view->model()->index(0, EntryModel::Username).data().toString(), QString(QChar(0x25cf)).repeated(6));
     m_mainWindow->resize(850, 650);
@@ -226,6 +247,7 @@ void TestGui::testKeystoneLayout()
     QVERIFY(view->width() >= view->minimumWidth());
     QVERIFY(view->model()->index(0, EntryModel::Title).data(Qt::AccessibleTextRole).toString()
                 .contains(QString(QChar(0x25cf)).repeated(6)));
+    folders->setChecked(true);
     m_mainWindow->resize(originalSize);
     config()->set(Config::GUI_ApplicationTheme, originalTheme);
     qobject_cast<Application*>(qApp)->applyTheme();
@@ -492,7 +514,6 @@ void TestGui::testTabs()
 
 void TestGui::testEditEntry()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     entryView->setFocus();
@@ -662,7 +683,6 @@ void TestGui::testSearchEditEntry()
     m_dbWidget->groupView()->setCurrentGroup(m_db->rootGroup());
 
     // Find buttons for entry creation
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     QWidget* entryNewWidget = toolBar->widgetForAction(m_mainWindow->findChild<QAction*>("actionEntryNew"));
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
     auto* titleEdit = editEntryWidget->findChild<QLineEdit*>("titleEdit");
@@ -679,7 +699,7 @@ void TestGui::testSearchEditEntry()
     m_dbWidget->groupView()->setCurrentGroup(badGroup);
 
     // Search for "Doggy" entry
-    auto* searchWidget = toolBar->findChild<SearchWidget*>("SearchWidget");
+    auto* searchWidget = m_mainWindow->findChild<SearchWidget*>("SearchWidget");
     auto* searchTextEdit = searchWidget->findChild<QLineEdit*>("searchEdit");
     QTest::mouseClick(searchTextEdit, Qt::LeftButton);
     QTest::keyClicks(searchTextEdit, "Doggy");
@@ -696,7 +716,6 @@ void TestGui::testSearchEditEntry()
 
 void TestGui::testAddEntry()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     // Given the status bar label with initial number of entries.
@@ -820,7 +839,6 @@ void TestGui::testPasswordEntryEntropy_data()
 
 void TestGui::testPasswordEntryEntropy()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
 
     // Find the new entry action
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
@@ -882,7 +900,6 @@ void TestGui::testPasswordEntryEntropy()
 
 void TestGui::testDicewareEntryEntropy()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
 
     // Find the new entry action
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
@@ -948,7 +965,6 @@ void TestGui::testDicewareEntryEntropy()
 
 void TestGui::testTotp()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     QCOMPARE(entryView->model()->rowCount(), 1);
@@ -1022,9 +1038,8 @@ void TestGui::testSearch()
     // Add canned entries for consistent testing
     addCannedEntries();
 
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
 
-    auto* searchWidget = toolBar->findChild<SearchWidget*>("SearchWidget");
+    auto* searchWidget = m_mainWindow->findChild<SearchWidget*>("SearchWidget");
     QVERIFY(searchWidget->isEnabled());
     auto* searchTextEdit = searchWidget->findChild<QLineEdit*>("searchEdit");
     auto* waitForEnterAction = searchWidget->findChild<QAction*>("actionSearchWaitForEnter");
@@ -1259,7 +1274,6 @@ void TestGui::testDeleteEntry()
 
     auto* groupView = m_dbWidget->findChild<GroupView*>("groupView");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryDeleteAction = m_mainWindow->findChild<QAction*>("actionEntryDelete");
     QWidget* entryDeleteWidget = toolBar->widgetForAction(entryDeleteAction);
     entryView->setFocus();
@@ -1376,7 +1390,6 @@ void TestGui::testCloneEntry()
 
 void TestGui::testEntryPlaceholders()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     // Find the new entry action
@@ -1737,7 +1750,6 @@ void TestGui::testDatabaseSettings()
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
     QVERIFY(entryNewAction->isEnabled());
 
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     QVERIFY(toolBar);
 
     QWidget* entryNewWidget = toolBar->widgetForAction(entryNewAction);
@@ -2037,7 +2049,6 @@ void TestGui::testAutoType()
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
     QVERIFY(entryNewAction->isEnabled());
 
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     QVERIFY(toolBar);
 
     QWidget* entryNewWidget = toolBar->widgetForAction(entryNewAction);
@@ -2328,7 +2339,6 @@ void TestGui::testMenuActionStates()
 void TestGui::addCannedEntries()
 {
     // Find buttons
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     QWidget* entryNewWidget = toolBar->widgetForAction(m_mainWindow->findChild<QAction*>("actionEntryNew"));
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
     auto* titleEdit = editEntryWidget->findChild<QLineEdit*>("titleEdit");
@@ -2391,7 +2401,7 @@ void TestGui::checkSaveDatabase()
 void TestGui::checkStatusBarText(const QString& textFragment)
 {
     QApplication::processEvents();
-    QVERIFY(m_statusBarLabel->isVisible());
+    QVERIFY(m_statusBarLabel); // Status text remains available without the legacy bottom bar.
     QTRY_VERIFY2(m_statusBarLabel->text().startsWith(textFragment),
                  qPrintable(QString("'%1' doesn't start with '%2'").arg(m_statusBarLabel->text(), textFragment)));
 }

@@ -79,6 +79,11 @@ jobs:
             mkdir -p diagnostics
             ditto -c -k --sequesterRsrc --keepParent build/diagnostic/Keystone.app diagnostics/Keystone-UI-preview.zip
           fi
+      - name: Collect GUI crash diagnostics
+        if: failure()
+        run: |
+          mkdir -p diagnostics
+          cp "$HOME"/Library/Logs/DiagnosticReports/testgui* diagnostics/ 2>/dev/null || true
       - name: Upload packages and test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -86,7 +91,7 @@ jobs:
           name: Keystone-${{ matrix.arch }}
           path: |
             dist/*
-            diagnostics/*.zip
+            diagnostics/*
             build/Testing/Temporary/LastTest.log
             build/vcpkg-manifest-install.log
           if-no-files-found: warn
