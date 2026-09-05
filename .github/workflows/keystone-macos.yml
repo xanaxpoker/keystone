@@ -49,11 +49,17 @@ jobs:
             -DWITH_XC_ALL=ON -DWITH_XC_DOCS=OFF -DWITH_XC_UPDATECHECK=OFF \
             -DWITH_TESTS=ON -DWITH_GUI_TESTS=ON -DWITH_XC_NETWORKING=ON \
             -DKEEPASSXC_BUILD_TYPE=Release
+      - name: Save compiled dependencies
+        uses: actions/cache/save@v4
+        with:
+          path: vcpkg-cache
+          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}
       - name: Compile
         run: cmake --build build --parallel 3
       - name: Test
         env:
           QT_QPA_PLATFORM: offscreen
+          KEYSTONE_CAPTURE_DIR: ${{ github.workspace }}/dist
         run: ctest --test-dir build --output-on-failure --parallel 3
       - name: Package
         run: bash utils/package-keystone-macos.sh '${{ matrix.arch }}'

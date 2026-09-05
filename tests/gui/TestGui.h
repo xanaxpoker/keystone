@@ -37,6 +37,7 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
+    void testKeystoneLayout();
     void testSettingsDefaultTabOrder();
     void testCreateDatabase();
     void testMergeDatabase();

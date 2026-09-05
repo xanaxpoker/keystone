@@ -170,6 +170,49 @@ void TestGui::cleanupTestCase()
     m_dbFile.remove();
 }
 
+void TestGui::testKeystoneLayout()
+{
+    auto* view = m_dbWidget->findChild<EntryView*>("entryView");
+    auto* preview = m_dbWidget->findChild<EntryPreviewWidget*>("previewWidget");
+    QVERIFY(view);
+    QVERIFY(preview);
+    const auto first = view->model()->index(0, EntryModel::Title);
+    QVERIFY(first.isValid());
+    auto* entry = view->entryFromIndex(first);
+    QVERIFY(entry);
+    entry->setTitle("Apple Account");
+    entry->setUsername("alex@example.com");
+    entry->setUrl("https://apple.com");
+    entry->setPassword("fixture-password-only");
+    clickIndex(view->indexFromEntry(entry), view, Qt::LeftButton);
+    QTRY_VERIFY(preview->isVisible());
+    auto* password = preview->findChild<QLabel*>("entryPasswordLabel");
+    QVERIFY(password);
+    QCOMPARE(password->text(), QString(QChar(0x25cf)).repeated(6));
+
+    for (const auto& theme : {QStringLiteral("light"), QStringLiteral("dark")}) {
+        config()->set(Config::GUI_ApplicationTheme, theme);
+        qobject_cast<Application*>(qApp)->applyTheme();
+        m_mainWindow->resize(1180, 760);
+        QApplication::processEvents();
+        // The entry and detail panes must be side by side, not overlap or stack.
+        QVERIFY(preview->mapTo(m_mainWindow.data(), QPoint()).x()
+                >= view->mapTo(m_mainWindow.data(), QPoint()).x() + view->width());
+        QCOMPARE(password->text(), QString(QChar(0x25cf)).repeated(6));
+        const auto captureDir = qEnvironmentVariable("KEYSTONE_CAPTURE_DIR");
+        if (!captureDir.isEmpty()) {
+            QVERIFY(QDir().mkpath(captureDir));
+            QVERIFY(m_mainWindow->grab().save(captureDir + "/Keystone-" + theme + ".png"));
+        }
+    }
+    config()->set(Config::GUI_HideUsernames, true);
+    QCOMPARE(view->model()->index(0, EntryModel::Username).data().toString(), QString(QChar(0x25cf)).repeated(6));
+    m_mainWindow->resize(850, 650);
+    QApplication::processEvents();
+    QVERIFY(preview->width() >= preview->minimumWidth());
+    QVERIFY(view->width() >= view->minimumWidth());
+}
+
 void TestGui::testSettingsDefaultTabOrder()
 {
     // check application settings default tab order

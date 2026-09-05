@@ -35,6 +35,29 @@
 
 #define ICON_ONLY_SECTION_SIZE 26
 
+// Read only the model's display values so username hiding remains authoritative.
+class KeystoneEntryDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
+    {
+        QStyledItemDelegate::initStyleOption(option, index);
+        const auto username = index.sibling(index.row(), EntryModel::Username).data(Qt::DisplayRole).toString();
+        if (!username.isEmpty()) {
+            option->text += QStringLiteral("\n") + username;
+        }
+    }
+
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    {
+        auto size = QStyledItemDelegate::sizeHint(option, index);
+        size.setHeight(qMax(size.height(), option.fontMetrics.height() * 2 + 20));
+        return size;
+    }
+};
+
 class PasswordStrengthItemDelegate : public QStyledItemDelegate
 {
 public:
@@ -77,6 +100,9 @@ EntryView::EntryView(QWidget* parent)
     // Use Qt::UserRole as sort role, see EntryModel::data()
     m_sortModel->setSortRole(Qt::UserRole);
     QTreeView::setModel(m_sortModel);
+    setItemDelegateForColumn(EntryModel::Title, new KeystoneEntryDelegate(this));
+    // A hidden username column changing must also repaint the title subtitle.
+    connect(m_sortModel, &QAbstractItemModel::dataChanged, this, [this] { viewport()->update(); });
     QTreeView::setItemDelegateForColumn(EntryModel::PasswordStrength, new PasswordStrengthItemDelegate(this));
 
     setUniformRowHeights(true);
@@ -473,7 +499,7 @@ void EntryView::resetViewToDefaults()
         header()->hideSection(EntryModel::ParentGroup);
     }
     header()->showSection(EntryModel::Title);
-    header()->showSection(EntryModel::Username);
+    header()->hideSection(EntryModel::Username);
     header()->hideSection(EntryModel::Url);
     header()->hideSection(EntryModel::Notes);
     header()->hideSection(EntryModel::Modified);
