@@ -74,3 +74,14 @@ QListWidget#recentListWidget::item { padding: 8px; }
 
 QLabel#keystoneBrand { font-size: 22px; font-weight: 600; padding: 6px; }
 QLabel#vaultSectionLabel { font-size: 10px; font-weight: 600; padding-left: 8px; }
+
+QListView#tagView { background: #202228; border: none; padding: 8px; color: #F2F4F8; }
+QListView#tagView::item { min-height: 28px; padding: 4px 8px; border-radius: 6px; }
+QListView#tagView::item:selected { background: #263F69; color: #F2F4F8; }
+QWidget#tagWidget QLabel { padding: 12px 16px 4px 16px; color: #A1A8B8; font-size: 10px; }
+QWidget#entryGeneralWidget QWidget { background-color: transparent; }
+QWidget#entryGeneralWidget QLineEdit { border: none; padding: 4px 0; }
+QWidget#entryGeneralWidget QToolButton { border: none; border-radius: 5px; padding: 4px; }
+QWidget#entryGeneralWidget QToolButton:hover { background: #263F69; }
+QLabel#entryUsernameTitleLabel, QLabel#entryPasswordTitleLabel, QLabel#entryUrlTitleLabel,
+QLabel#entryExpirationTitleLabel, QLabel#entryTagsTitleLabel, QLabel#entryNotesTitleLabel { color: #A1A8B8; font-weight: normal; }

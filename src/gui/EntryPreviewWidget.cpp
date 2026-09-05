@@ -47,10 +47,12 @@ EntryPreviewWidget::EntryPreviewWidget(QWidget* parent)
     , m_selectedTabGroup(0)
 {
     m_ui->setupUi(this);
+    setAttribute(Qt::WA_StyledBackground, true);
+    m_ui->entryGeneralWidget->setAttribute(Qt::WA_StyledBackground, true);
 
     // Entry
     m_ui->entryTotpButton->setIcon(icons()->icon("totp"));
-    m_ui->entryCloseButton->setIcon(icons()->icon("arrow-collapse-down"));
+    m_ui->entryCloseButton->setIcon(icons()->icon("dialog-close"));
     m_ui->toggleUsernameButton->setIcon(icons()->onOffIcon("password-show", true));
     m_ui->togglePasswordButton->setIcon(icons()->onOffIcon("password-show", true));
     m_ui->toggleEntryNotesButton->setIcon(icons()->onOffIcon("password-show", true));
@@ -248,7 +250,8 @@ void EntryPreviewWidget::updateEntryHeaderLine()
 {
     Q_ASSERT(m_currentEntry);
     const QString title = m_currentEntry->resolveMultiplePlaceholders(m_currentEntry->title());
-    m_ui->entryTitleLabel->setRawText(hierarchy(m_currentEntry->group(), title));
+    m_ui->entryTitleLabel->setRawText(title);
+    m_ui->entryTitleLabel->setToolTip(hierarchy(m_currentEntry->group(), title));
     m_ui->entryIcon->setPixmap(Icons::entryIconPixmap(m_currentEntry, IconSize::Large));
 }
 

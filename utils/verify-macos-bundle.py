@@ -38,8 +38,13 @@ def verify(app, arch):
         count += 1
         subprocess.run(['lipo', str(binary), '-verify_arch', arch], check=True)
         search_paths = rpaths(binary) + main_paths
-        for line in output('otool', '-L', str(binary)).splitlines()[1:]:
+        install_ids = output('otool', '-D', str(binary)).splitlines()[1:]
+        for position, line in enumerate(output('otool', '-L', str(binary)).splitlines()[1:]):
             dependency = line.strip().split(' (')[0]
+            # otool -L lists a dylib's LC_ID_DYLIB first; it is its identity,
+            # not a load dependency (plugins need not resolve their own ID).
+            if position == 0 and dependency in install_ids:
+                continue
             if dependency.startswith(('/usr/lib/', '/System/Library/')):
                 continue
             if dependency.startswith('@rpath/'):

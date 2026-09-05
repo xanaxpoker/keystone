@@ -19,6 +19,7 @@
 #include "EntryView.h"
 
 #include <QAccessible>
+#include <QApplication>
 #include <QDrag>
 #include <QGuiApplication>
 #include <QHeaderView>
@@ -41,13 +42,43 @@ class KeystoneEntryDelegate : public QStyledItemDelegate
 public:
     using QStyledItemDelegate::QStyledItemDelegate;
 
-    void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
     {
-        QStyledItemDelegate::initStyleOption(option, index);
+        QStyleOptionViewItem panel(option);
+        QStyledItemDelegate::initStyleOption(&panel, index);
+        const auto title = panel.text;
+        const auto icon = panel.icon;
         const auto username = index.sibling(index.row(), EntryModel::Username).data(Qt::DisplayRole).toString();
-        if (!username.isEmpty()) {
-            option->text += QStringLiteral("\n") + username;
-        }
+        panel.text.clear();
+        panel.icon = QIcon();
+        const auto* widget = option.widget;
+        auto* style = widget ? widget->style() : QApplication::style();
+        style->drawControl(QStyle::CE_ItemViewItem, &panel, painter, widget);
+
+        painter->save();
+        const auto bounds = option.rect.adjusted(12, 6, -12, -6);
+        auto iconRect = QRect(bounds.left(), bounds.center().y() - 14, 28, 28);
+        iconRect = QStyle::visualRect(option.direction, option.rect, iconRect);
+        icon.paint(painter, iconRect, Qt::AlignCenter,
+                   option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled);
+        auto textRect = bounds.adjusted(40, 0, 0, 0);
+        textRect = QStyle::visualRect(option.direction, option.rect, textRect);
+        const auto alignment = Qt::AlignVCenter
+            | (option.direction == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
+        auto titleFont = option.font;
+        titleFont.setWeight(QFont::DemiBold);
+        painter->setFont(titleFont);
+        painter->setPen(option.palette.color(QPalette::Text));
+        const int halfHeight = textRect.height() / 2;
+        painter->drawText(QRect(textRect.x(), textRect.y(), textRect.width(), halfHeight), alignment,
+                          QFontMetrics(titleFont).elidedText(title, Qt::ElideRight, textRect.width()));
+        auto subtitleFont = option.font;
+        subtitleFont.setPointSizeF(qMax(9.0, subtitleFont.pointSizeF() - 1.0));
+        painter->setFont(subtitleFont);
+        painter->setPen(option.palette.color(QPalette::PlaceholderText));
+        painter->drawText(QRect(textRect.x(), textRect.y() + halfHeight, textRect.width(), halfHeight), alignment,
+                          QFontMetrics(subtitleFont).elidedText(username, Qt::ElideRight, textRect.width()));
+        painter->restore();
     }
 
     QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
@@ -503,8 +534,8 @@ void EntryView::resetViewToDefaults()
     header()->hideSection(EntryModel::Url);
     header()->hideSection(EntryModel::Notes);
     header()->hideSection(EntryModel::Modified);
-    header()->showSection(EntryModel::Paperclip);
-    header()->showSection(EntryModel::Totp);
+    header()->hideSection(EntryModel::Paperclip);
+    header()->hideSection(EntryModel::Totp);
 
     header()->hideSection(EntryModel::Password);
     header()->hideSection(EntryModel::Expires);

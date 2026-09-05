@@ -125,6 +125,13 @@ QVariant EntryModel::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
+    // Expose the same masked values as the two-line title to assistive technology.
+    if (role == Qt::AccessibleTextRole && index.column() == Title) {
+        const auto title = data(index, Qt::DisplayRole).toString();
+        const auto username = data(index.sibling(index.row(), Username), Qt::DisplayRole).toString();
+        return username.isEmpty() ? title : title + QStringLiteral(", ") + username;
+    }
+
     Entry* entry = entryFromIndex(index);
     EntryAttributes* attr = entry->attributes();
 

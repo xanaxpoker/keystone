@@ -54,6 +54,13 @@ class BundleTests(unittest.TestCase):
         self.with_library()
         bundle.verify(self.app, 'arm64')
 
+    def test_plugin_install_id_is_not_a_dependency(self):
+        plugin = self.app / 'Contents/PlugIns/platforms/libplugin.dylib'
+        plugin.parent.mkdir(parents=True)
+        self.run_command('clang', '-arch', 'arm64', '-dynamiclib', str(self.root / 'lib.c'),
+                         '-Wl,-install_name,@rpath/libplugin.dylib', '-o', str(plugin))
+        bundle.verify(self.app, 'arm64')
+
     def test_missing_library(self):
         self.with_library()
         self.lib.unlink()

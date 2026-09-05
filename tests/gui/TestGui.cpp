@@ -172,6 +172,8 @@ void TestGui::cleanupTestCase()
 
 void TestGui::testKeystoneLayout()
 {
+    const auto originalSize = m_mainWindow->size();
+    const auto originalTheme = config()->get(Config::GUI_ApplicationTheme);
     auto* view = m_dbWidget->findChild<EntryView*>("entryView");
     auto* preview = m_dbWidget->findChild<EntryPreviewWidget*>("previewWidget");
     QVERIFY(view);
@@ -184,6 +186,15 @@ void TestGui::testKeystoneLayout()
     entry->setUsername("alex@example.com");
     entry->setUrl("https://apple.com");
     entry->setPassword("fixture-password-only");
+    m_db->rootGroup()->setName("Personal");
+    for (const auto& name : {"Figma", "GitHub", "Notion", "Proton Mail", "Slack"}) {
+        auto* sample = new Entry();
+        sample->setUuid(QUuid::createUuid());
+        sample->setGroup(m_db->rootGroup());
+        sample->setTitle(name);
+        sample->setUsername("alex@example.com");
+        sample->setPassword("fixture-password-only");
+    }
     clickIndex(view->indexFromEntry(entry), view, Qt::LeftButton);
     QTRY_VERIFY(preview->isVisible());
     auto* password = preview->findChild<QLabel*>("entryPasswordLabel");
@@ -211,6 +222,11 @@ void TestGui::testKeystoneLayout()
     QApplication::processEvents();
     QVERIFY(preview->width() >= preview->minimumWidth());
     QVERIFY(view->width() >= view->minimumWidth());
+    QVERIFY(view->model()->index(0, EntryModel::Title).data(Qt::AccessibleTextRole).toString()
+                .contains(QString(QChar(0x25cf)).repeated(6)));
+    m_mainWindow->resize(originalSize);
+    config()->set(Config::GUI_ApplicationTheme, originalTheme);
+    qobject_cast<Application*>(qApp)->applyTheme();
 }
 
 void TestGui::testSettingsDefaultTabOrder()
