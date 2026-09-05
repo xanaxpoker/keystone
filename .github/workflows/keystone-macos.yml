@@ -27,12 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: vcpkg-cache
-          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}
+          key: vcpkg-native-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-${{ github.run_id }}
+          restore-keys: vcpkg-native-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-
       - name: Build tools
-        run: brew install ninja automake autoconf libtool pkg-config
+        run: brew install ninja automake autoconf autoconf-archive libtool pkg-config
       - name: Verify packaging checks
         run: python3 utils/tests/test_macos_bundle.py
       - name: Pinned vcpkg
@@ -46,16 +47,18 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
+            -DVCPKG_HOST_TRIPLET=${{ matrix.triplet }} \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ matrix.target }} \
             -DWITH_XC_ALL=ON -DWITH_XC_DOCS=OFF -DWITH_XC_UPDATECHECK=OFF \
             -DWITH_TESTS=ON -DWITH_GUI_TESTS=ON -DWITH_XC_NETWORKING=ON \
             -DKEEPASSXC_BUILD_TYPE=Release
       - name: Save compiled dependencies
+        if: always()
         uses: actions/cache/save@v4
         with:
           path: vcpkg-cache
-          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}
+          key: vcpkg-native-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-${{ github.run_id }}
       - name: Compile
         run: cmake --build build --parallel 3
       - name: Test
