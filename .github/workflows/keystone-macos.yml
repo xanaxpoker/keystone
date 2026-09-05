@@ -63,9 +63,9 @@ jobs:
         run: cmake --build build --parallel 3
       - name: Test
         env:
-          QT_QPA_PLATFORM: offscreen
+          QT_QPA_PLATFORM: cocoa
           KEYSTONE_CAPTURE_DIR: ${{ github.workspace }}/dist
-        run: ctest --test-dir build --output-on-failure --parallel 3
+        run: ctest --test-dir build --output-on-failure --parallel 1
       - name: Package
         run: bash utils/package-keystone-macos.sh '${{ matrix.arch }}'
       - name: Upload packages and test results
