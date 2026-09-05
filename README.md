@@ -1,3 +1,11 @@
+# Keystone
+
+An independent macOS interface fork of KeePassXC 2.7.12, with a three-column layout, spacious credential list, and matching light and dark themes.
+
+See [KEYSTONE.md](KEYSTONE.md) for the fork scope and [the macOS workflow](.github/workflows/keystone-macos.yml) for separate Apple silicon and Intel preview builds. The original project documentation and attribution follow.
+
+---
+
 # <img src="https://keepassxc.org/assets/img/keepassxc.svg" width="40" height="40"/> KeePassXC
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/6326/badge)](https://bestpractices.coreinfrastructure.org/projects/6326)
 [![TeamCity Build Status](https://ci.keepassxc.org/app/rest/builds/buildType:\(project:KeepassXC\)/statusIcon)](https://ci.keepassxc.org/?guest=1)

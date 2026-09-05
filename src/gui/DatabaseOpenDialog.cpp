@@ -34,7 +34,7 @@ DatabaseOpenDialog::DatabaseOpenDialog(QWidget* parent)
     , m_view(new DatabaseOpenWidget(this))
     , m_tabBar(new QTabBar(this))
 {
-    setWindowTitle(tr("Unlock Database - KeePassXC"));
+    setWindowTitle(tr("Unlock Vault - Keystone"));
     setWindowFlags(Qt::Dialog);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);

@@ -17,6 +17,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 
 project(Keystone)
+set(KEYSTONE_VERSION "0.1.0")
 set(APP_ID "app.keystone.passwords")
 
 if(NOT CMAKE_BUILD_TYPE)

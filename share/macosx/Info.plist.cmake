@@ -24,14 +24,12 @@
   <string>${PROJECT_NAME}</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
-  <key>CFBundleVersion</key>
-  <string>${KEEPASSXC_VERSION}</string>
   <key>CFBundleShortVersionString</key>
-  <string>${KEEPASSXC_VERSION}</string>
+  <string>${KEYSTONE_VERSION}</string>
   <key>CFBundleSignature</key>
   <string>KPXC</string>
   <key>CFBundleVersion</key>
-  <string>${KEEPASSXC_VERSION_NUM}</string>
+  <string>1</string>
   <key>NSHumanReadableCopyright</key>
     <string>Copyright 2016-2020 KeePassXC Development Team</string>
     <key>CFBundleDocumentTypes</key>

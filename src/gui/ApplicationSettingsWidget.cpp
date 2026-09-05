@@ -526,7 +526,7 @@ void ApplicationSettingsWidget::resetSettings()
 
 void ApplicationSettingsWidget::importSettings()
 {
-    auto file = fileDialog()->getOpenFileName(this, tr("Import KeePassXC Settings"), {}, "*.ini");
+    auto file = fileDialog()->getOpenFileName(this, tr("Import Keystone Settings"), {}, "*.ini");
     if (file.isEmpty()) {
         return;
     }
@@ -543,7 +543,7 @@ void ApplicationSettingsWidget::importSettings()
 
 void ApplicationSettingsWidget::exportSettings()
 {
-    auto file = fileDialog()->getSaveFileName(this, tr("Export KeePassXC Settings"), {}, "*.ini");
+    auto file = fileDialog()->getSaveFileName(this, tr("Export Keystone Settings"), {}, "*.ini");
     if (file.isEmpty()) {
         return;
     }

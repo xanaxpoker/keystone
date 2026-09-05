@@ -1,11 +1,59 @@
-import pathlib, subprocess, sys
-app=pathlib.Path(sys.argv[1]); arch=sys.argv[2]
-for file in app.rglob('*'):
- if not file.is_file() or file.is_symlink(): continue
- if 'Mach-O' not in subprocess.check_output(['file',str(file)],text=True): continue
- subprocess.run(['lipo','-verify_arch',arch,str(file)],check=True)
- for line in subprocess.check_output(['otool','-L',str(file)],text=True).splitlines()[1:]:
-  dep=line.strip().split(' (')[0]
-  if dep.startswith('/') and not dep.startswith(('/usr/lib/','/System/Library/')):
-   raise SystemExit(f'External runtime dependency: {file}: {dep}')
-print('Verified bundle architecture and dependency paths')
+"""Reject wrong-architecture binaries and nonportable macOS bundle dependencies."""
+import pathlib
+import subprocess
+import sys
+
+
+def output(*args):
+    return subprocess.check_output(args, text=True)
+
+
+def verify(app, arch):
+    app = pathlib.Path(app).resolve()
+    executable_dir = app / 'Contents/MacOS'
+    main = executable_dir / 'Keystone'
+    if not main.is_file():
+        raise ValueError(f'Missing executable: {main}')
+
+    def expand(path, binary):
+        return pathlib.Path(path.replace('@loader_path', str(binary.parent))
+                            .replace('@executable_path', str(executable_dir)))
+
+    def rpaths(binary):
+        lines = output('otool', '-l', str(binary)).splitlines()
+        result = []
+        for i, line in enumerate(lines):
+            if line.strip() == 'cmd LC_RPATH':
+                value = lines[i + 2].strip().removeprefix('path ').split(' (offset ')[0]
+                result.append(expand(value, binary))
+        return result
+
+    main_paths = rpaths(main)
+    count = 0
+    for binary in app.rglob('*'):
+        if not binary.is_file() or binary.is_symlink():
+            continue
+        if 'Mach-O' not in output('file', str(binary)):
+            continue
+        count += 1
+        subprocess.run(['lipo', str(binary), '-verify_arch', arch], check=True)
+        search_paths = rpaths(binary) + main_paths
+        for line in output('otool', '-L', str(binary)).splitlines()[1:]:
+            dependency = line.strip().split(' (')[0]
+            if dependency.startswith(('/usr/lib/', '/System/Library/')):
+                continue
+            if dependency.startswith('@rpath/'):
+                relative = dependency.removeprefix('@rpath/')
+                candidates = [directory / relative for directory in search_paths]
+            elif dependency.startswith(('@loader_path/', '@executable_path/')):
+                candidates = [expand(dependency, binary)]
+            else:
+                raise ValueError(f'External runtime dependency: {binary}: {dependency}')
+            resolved = [p.resolve() for p in candidates if p.is_file()]
+            if not any(app in p.parents for p in resolved):
+                raise ValueError(f'Unresolved or external runtime dependency: {binary}: {dependency}')
+    print(f'Verified {count} Mach-O files for {arch}; all non-system dependencies resolve inside the bundle')
+
+
+if __name__ == '__main__':
+    verify(sys.argv[1], sys.argv[2])

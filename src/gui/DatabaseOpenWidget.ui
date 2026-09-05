@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="accessibleName">
-   <string>Unlock KeePassXC Database</string>
+   <string>Unlock your vault</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
    <item>
@@ -85,7 +85,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Unlock KeePassXC Database</string>
+             <string>Unlock your vault</string>
             </property>
            </widget>
           </item>

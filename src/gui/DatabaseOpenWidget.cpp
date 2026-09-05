@@ -274,7 +274,7 @@ void DatabaseOpenWidget::load(const QString& filename)
     m_ui->fileNameLabel->setRawText(m_filename);
 
     // Set the public name if defined
-    auto label = tr("Unlock KeePassXC Database");
+    auto label = tr("Unlock your vault");
     if (!m_db->publicName().isEmpty()) {
         label.append(QString(": %1").arg(m_db->publicName()));
     }
@@ -384,7 +384,7 @@ void DatabaseOpenWidget::openDatabase()
                                "created by a newer version of KeePassXC.\n\n"
                                "You can try to open it anyway, but it may be incomplete\n"
                                "and saving any changes may incur data loss.\n\n"
-                               "We recommend you update your KeePassXC installation."));
+                               "We recommend you update your Keystone installation."));
             auto btn = msgBox->addButton(tr("Open database anyway"), QMessageBox::ButtonRole::AcceptRole);
             msgBox->setDefaultButton(btn);
             msgBox->addButton(QMessageBox::Cancel);
@@ -576,7 +576,7 @@ bool DatabaseOpenWidget::browseKeyFile()
     }
     if (filename.endsWith(".kdbx")
         && MessageBox::warning(this,
-                               tr("KeePassXC database file selected"),
+                               tr("KeePass database file selected"),
                                tr("The file you selected looks like a database file.\nA database file is NOT a key "
                                   "file!\n\nAre you sure you want to continue with this file?."),
                                MessageBox::Button::Yes | MessageBox::Button::Cancel,

@@ -9,7 +9,7 @@ mkdir -p "$stage" dist
 cmake --install build --prefix "$stage"
 app="$stage/Keystone.app"
 test -d "$app"
-lipo -verify_arch "$arch" "$app/Contents/MacOS/Keystone"
+lipo "$app/Contents/MacOS/Keystone" -verify_arch "$arch"
 # Nested code is signed first; never use the upstream developer identity.
 while IFS= read -r -d '' binary; do
   if file "$binary" | grep -q 'Mach-O'; then codesign --force --sign - "$binary"; fi

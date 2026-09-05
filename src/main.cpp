@@ -163,13 +163,13 @@ int main(int argc, char** argv)
                 app.sendFileNamesToRunningInstance(fileNames);
             }
 
-            qWarning() << QObject::tr("Another instance of KeePassXC is already running.").toUtf8().constData();
+            qWarning() << QObject::tr("Another instance of Keystone is already running.").toUtf8().constData();
         }
         return EXIT_SUCCESS;
     }
 
     if (parser.isSet(lockOption)) {
-        qWarning() << QObject::tr("KeePassXC is not running. No open database to lock").toUtf8().constData();
+        qWarning() << QObject::tr("Keystone is not running. No open database to lock").toUtf8().constData();
 
         // still return with EXIT_SUCCESS because when used within a script for ensuring that there is no unlocked
         // keepass database (e.g. screen locking) we can consider it as successful
@@ -180,7 +180,7 @@ int main(int argc, char** argv)
         QString error = QObject::tr("Fatal error while testing the cryptographic functions.");
         error.append("\n");
         error.append(Crypto::errorString());
-        MessageBox::critical(nullptr, QObject::tr("KeePassXC - Error"), error);
+        MessageBox::critical(nullptr, QObject::tr("Keystone - Error"), error);
         return EXIT_FAILURE;
     }
 
