@@ -30,13 +30,13 @@ WelcomeWidget::WelcomeWidget(QWidget* parent)
 {
     m_ui->setupUi(this);
 
-    m_ui->welcomeLabel->setText(tr("Welcome to KeePassXC %1").arg(KEEPASSXC_VERSION));
+    m_ui->welcomeLabel->setText(tr("Welcome to Keystone"));
     QFont welcomeLabelFont = m_ui->welcomeLabel->font();
     welcomeLabelFont.setBold(true);
     welcomeLabelFont.setPointSize(welcomeLabelFont.pointSize() + 4);
     m_ui->welcomeLabel->setFont(welcomeLabelFont);
 
-    m_ui->iconLabel->setPixmap(icons()->applicationIcon().pixmap(64));
+    m_ui->iconLabel->setPixmap(icons()->applicationIcon().pixmap(96));
     m_ui->buttonNewDatabase->setIcon(icons()->icon("document-new"));
     m_ui->buttonNewDatabase->setStyleSheet("text-align:center;");
     m_ui->buttonOpenDatabase->setIcon(icons()->icon("document-open"));

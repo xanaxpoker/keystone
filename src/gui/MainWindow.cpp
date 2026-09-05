@@ -76,7 +76,7 @@
 #include "mainwindowadaptor.h"
 #endif
 
-const QString MainWindow::BaseWindowTitle = "KeePassXC";
+const QString MainWindow::BaseWindowTitle = "Keystone";
 
 MainWindow* g_MainWindow = nullptr;
 MainWindow* getMainWindow()
@@ -1581,7 +1581,7 @@ void MainWindow::updateTrayIcon()
             menu->addAction(m_ui->actionLockAllDatabases);
 
 #ifdef Q_OS_MACOS
-            auto actionQuit = new QAction(tr("Quit KeePassXC"), menu);
+            auto actionQuit = new QAction(tr("Quit Keystone"), menu);
             connect(actionQuit, SIGNAL(triggered()), SLOT(appExit()));
             menu->addAction(actionQuit);
 #else

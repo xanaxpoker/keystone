@@ -16,8 +16,8 @@
 
 cmake_minimum_required(VERSION 3.10.0)
 
-project(KeePassXC)
-set(APP_ID "org.keepassxc.${PROJECT_NAME}")
+project(Keystone)
+set(APP_ID "app.keystone.passwords")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
@@ -447,7 +447,7 @@ if(WIN32)
 endif()
 
 if(APPLE AND WITH_APP_BUNDLE OR WIN32)
-    set(PROGNAME KeePassXC)
+    set(PROGNAME Keystone)
 else()
     set(PROGNAME keepassxc)
 endif()

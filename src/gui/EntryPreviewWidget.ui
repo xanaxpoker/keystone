@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <ui version="4.0">
  <class>EntryPreviewWidget</class>
  <widget class="QWidget" name="EntryPreviewWidget">
@@ -15,16 +15,16 @@
     <number>0</number>
    </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>16</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>16</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>16</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>16</number>
    </property>
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
@@ -79,7 +79,7 @@
               </size>
              </property>
              <property name="text">
-              <string/>
+              <string />
              </property>
             </widget>
            </item>
@@ -176,7 +176,7 @@
             <string>Display current TOTP value</string>
            </property>
            <property name="text">
-            <string/>
+            <string />
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -192,7 +192,7 @@
             <string>Close</string>
            </property>
            <property name="text">
-            <string/>
+            <string />
            </property>
           </widget>
          </item>
@@ -219,7 +219,7 @@
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
             <widget class="QWidget" name="entryGeneralWidget" native="true">
-             <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,1" columnstretch="0,1,0,0,0,1">
+             <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,1" columnstretch="0,1">
               <property name="leftMargin">
                <number>0</number>
               </property>
@@ -236,14 +236,14 @@
                <number>8</number>
               </property>
               <property name="verticalSpacing">
-               <number>6</number>
+               <number>20</number>
               </property>
-              <item row="1" column="1" colspan="2">
+              <item row="1" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_7">
                 <item>
                  <widget class="QToolButton" name="togglePasswordButton">
                   <property name="text">
-                   <string notr="true"/>
+                   <string notr="true" />
                   </property>
                   <property name="iconSize">
                    <size>
@@ -317,7 +317,7 @@
                 </item>
                </layout>
               </item>
-              <item row="0" column="5">
+              <item row="2" column="1">
                <widget class="ElidedLabel" name="entryUrlLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -351,22 +351,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="3">
-               <spacer name="entryMiddleHorizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>10</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="0" column="0">
                <widget class="QLabel" name="entryUsernameTitleLabel">
                 <property name="sizePolicy">
@@ -392,7 +376,7 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="1" colspan="5">
+              <item row="5" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
                 <property name="spacing">
                  <number>6</number>
@@ -400,7 +384,7 @@
                 <item alignment="Qt::AlignTop">
                  <widget class="QToolButton" name="toggleEntryNotesButton">
                   <property name="text">
-                   <string/>
+                   <string />
                   </property>
                   <property name="iconSize">
                    <size>
@@ -440,7 +424,7 @@
                 </item>
                </layout>
               </item>
-              <item row="2" column="0">
+              <item row="4" column="0">
                <widget class="QLabel" name="entryTagsTitleLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -462,7 +446,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" colspan="2">
+              <item row="0" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <property name="spacing">
                  <number>8</number>
@@ -470,7 +454,7 @@
                 <item>
                  <widget class="QToolButton" name="toggleUsernameButton">
                   <property name="text">
-                   <string/>
+                   <string />
                   </property>
                   <property name="iconSize">
                    <size>
@@ -516,7 +500,7 @@
                 </item>
                </layout>
               </item>
-              <item row="2" column="1" colspan="5">
+              <item row="4" column="1">
                <widget class="TagsEdit" name="entryTagsList" native="true">
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -529,7 +513,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="5">
+              <item row="3" column="1">
                <widget class="QLabel" name="entryExpirationLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -554,22 +538,6 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="3">
-               <spacer name="entryMiddleHorizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>10</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="1" column="0">
                <widget class="QLabel" name="entryPasswordTitleLabel">
                 <property name="sizePolicy">
@@ -592,7 +560,7 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="5" column="0">
                <widget class="QLabel" name="entryNotesTitleLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -614,7 +582,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="4">
+              <item row="3" column="0">
                <widget class="QLabel" name="entryExpirationTitleLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -636,7 +604,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="4">
+              <item row="2" column="0">
                <widget class="QLabel" name="entryUrlTitleLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -932,7 +900,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string/>
+              <string />
              </property>
             </widget>
            </item>
@@ -962,7 +930,7 @@
             <string>Close</string>
            </property>
            <property name="text">
-            <string/>
+            <string />
            </property>
           </widget>
          </item>
@@ -1118,7 +1086,7 @@
                 <item alignment="Qt::AlignTop">
                  <widget class="QToolButton" name="toggleGroupNotesButton">
                   <property name="text">
-                   <string/>
+                   <string />
                   </property>
                   <property name="checkable">
                    <bool>true</bool>
@@ -1281,6 +1249,6 @@
   <tabstop>toggleGroupNotesButton</tabstop>
   <tabstop>groupCloseButton</tabstop>
  </tabstops>
- <resources/>
- <connections/>
+ <resources />
+ <connections />
 </ui>

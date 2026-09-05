@@ -78,8 +78,8 @@ QPalette LightStyle::standardPalette() const
     palette.setColor(QPalette::Inactive, QPalette::ButtonText, QRgb(0x454A54));
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, QRgb(0x97979B));
 
-    palette.setColor(QPalette::Active, QPalette::Highlight, QRgb(0x507F1F));
-    palette.setColor(QPalette::Inactive, QPalette::Highlight, QRgb(0xA6BE8E));
+    palette.setColor(QPalette::Active, QPalette::Highlight, QRgb(0x3478F6));
+    palette.setColor(QPalette::Inactive, QPalette::Highlight, QRgb(0x3478F6));
     palette.setColor(QPalette::Disabled, QPalette::Highlight, QRgb(0xC3D5B4));
 
     palette.setColor(QPalette::Active, QPalette::HighlightedText, QRgb(0xFFFFFF));
@@ -92,9 +92,9 @@ QPalette LightStyle::standardPalette() const
     palette.setColor(QPalette::All, QPalette::Dark, QRgb(0xBBBBC2));
     palette.setColor(QPalette::All, QPalette::Shadow, QRgb(0x6C6D79));
 
-    palette.setColor(QPalette::All, QPalette::Link, QRgb(0x4B7B19));
+    palette.setColor(QPalette::All, QPalette::Link, QRgb(0x3478F6));
     palette.setColor(QPalette::Disabled, QPalette::Link, QRgb(0x4F6935));
-    palette.setColor(QPalette::All, QPalette::LinkVisited, QRgb(0x507826));
+    palette.setColor(QPalette::All, QPalette::LinkVisited, QRgb(0x3478F6));
     palette.setColor(QPalette::Disabled, QPalette::LinkVisited, QRgb(0x506935));
 
     return palette;

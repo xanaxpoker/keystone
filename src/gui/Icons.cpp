@@ -65,7 +65,7 @@ QString Icons::applicationIconName()
 
 QIcon Icons::applicationIcon()
 {
-    return icon(applicationIconName(), false);
+    return QIcon(":/styles/keystone.svg");
 }
 
 QString Icons::trayIconAppearance() const

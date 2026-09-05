@@ -101,6 +101,8 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     m_messageWidget->setHidden(true);
 
     auto mainLayout = new QVBoxLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
     mainLayout->addWidget(m_messageWidget);
     auto hbox = new QHBoxLayout();
     mainLayout->addLayout(hbox);
@@ -115,7 +117,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
 
     auto tagsWidget = new QWidget();
     auto tagsLayout = new QVBoxLayout();
-    auto tagsTitle = new QLabel(tr("Searches and Tags"));
+    auto tagsTitle = new QLabel(tr("COLLECTIONS"));
     tagsTitle->setProperty("title", true);
     tagsWidget->setObjectName("tagWidget");
     tagsWidget->setLayout(tagsLayout);
@@ -123,6 +125,8 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     tagsLayout->addWidget(m_tagView);
     tagsLayout->setMargin(0);
 
+    m_groupSplitter->setObjectName("vaultSidebar");
+    m_groupSplitter->setMinimumWidth(170);
     m_groupSplitter->setOrientation(Qt::Vertical);
     m_groupSplitter->setChildrenCollapsible(true);
     m_groupSplitter->addWidget(m_groupView);
@@ -151,7 +155,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     m_mainSplitter->setStretchFactor(1, 100);
     m_mainSplitter->setSizes({1, 1});
 
-    m_previewSplitter->setOrientation(Qt::Vertical);
+    m_previewSplitter->setOrientation(Qt::Horizontal);
     m_previewSplitter->setChildrenCollapsible(true);
 
     m_groupView->setObjectName("groupView");
@@ -177,6 +181,8 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
 #endif
 
     m_previewView->setObjectName("previewWidget");
+    m_previewView->setMinimumWidth(340);
+    m_entryView->setMinimumWidth(250);
     m_previewView->hide();
     m_previewSplitter->addWidget(m_entryView);
     m_previewSplitter->addWidget(m_previewView);
@@ -392,13 +398,13 @@ void DatabaseWidget::setSplitterSizes(const QHash<Config::ConfigKey, QList<int>>
         switch (itr.key()) {
         case Config::GUI_SplitterState:
             if (value.size() < 2) {
-                value = QList({static_cast<int>(width() * 0.25), static_cast<int>(width() * 0.75)});
+                value = QList({static_cast<int>(width() * 0.20), static_cast<int>(width() * 0.80)});
             }
             m_mainSplitter->setSizes(value);
             break;
         case Config::GUI_PreviewSplitterState:
             if (value.size() < 2) {
-                value = QList({static_cast<int>(height() * 0.8), static_cast<int>(height() * 0.2)});
+                value = QList({static_cast<int>(width() * 0.38), static_cast<int>(width() * 0.42)});
             }
             m_previewSplitter->setSizes(value);
             break;

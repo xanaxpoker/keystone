@@ -1,0 +1,69 @@
+name: Keystone macOS
+on:
+  workflow_dispatch:
+  push:
+    branches: [keystone-ui]
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            arch: arm64
+            triplet: arm64-osx-dynamic-release
+            target: '11.0'
+          - runner: macos-15-intel
+            arch: x86_64
+            triplet: x64-osx-dynamic-release
+            target: '10.15'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    env:
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg-cache,readwrite
+      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: vcpkg-cache
+          key: vcpkg-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}
+      - name: Build tools
+        run: brew install ninja automake autoconf libtool pkg-config
+      - name: Pinned vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout 66c0373dc7fca549e5803087b9487edfe3aca0a1
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
+            -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ matrix.target }} \
+            -DWITH_XC_ALL=ON -DWITH_XC_DOCS=OFF -DWITH_XC_UPDATECHECK=OFF \
+            -DWITH_TESTS=ON -DWITH_GUI_TESTS=ON -DWITH_XC_NETWORKING=ON \
+            -DKEEPASSXC_BUILD_TYPE=Release
+      - name: Compile
+        run: cmake --build build --parallel 3
+      - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: ctest --test-dir build --output-on-failure --parallel 3
+      - name: Package
+        run: bash utils/package-keystone-macos.sh '${{ matrix.arch }}'
+      - name: Upload packages and test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Keystone-${{ matrix.arch }}
+          path: |
+            dist/*
+            build/Testing/Temporary/LastTest.log
+            build/vcpkg-manifest-install.log
+          if-no-files-found: warn

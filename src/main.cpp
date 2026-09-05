@@ -69,9 +69,9 @@ int main(int argc, char** argv)
     Application app(argc, argv);
     // don't set organizationName as that changes the return value of
     // QStandardPaths::writableLocation(QDesktopServices::DataLocation)
-    Application::setApplicationName("KeePassXC");
+    Application::setApplicationName("Keystone");
     Application::setApplicationVersion(KEEPASSXC_VERSION);
-    app.setProperty("KPXC_QUALIFIED_APPNAME", "org.keepassxc.KeePassXC");
+    app.setProperty("KPXC_QUALIFIED_APPNAME", "app.keystone.passwords");
 
     // HACK: Prevent long-running threads from deadlocking the program with only 1 CPU
     // See https://github.com/keepassxreboot/keepassxc/issues/10391
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
     }
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(QObject::tr("KeePassXC - cross-platform password manager"));
+    parser.setApplicationDescription(QObject::tr("Keystone - your passwords, beautifully private"));
     parser.addPositionalArgument(
         "filename(s)", QObject::tr("filenames of the password databases to open (*.kdbx)"), "[filename(s)]");
 

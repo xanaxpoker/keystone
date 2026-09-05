@@ -422,13 +422,12 @@ if(WIN32)
 endif()
 
 if(APPLE AND WITH_APP_BUNDLE)
-    set(MACOSX_BUNDLE_IDENTIFIER org.keepassxc.keepassxc)
+    set(MACOSX_BUNDLE_IDENTIFIER app.keystone.passwords)
     set(MACOSX_BUNDLE_ICON_NAME keepassxc)
     set(MACOSX_BUNDLE_APPLE_ENTITLEMENTS "${CMAKE_SOURCE_DIR}/share/macosx/keepassxc.entitlements")
     configure_file("${CMAKE_SOURCE_DIR}/share/macosx/Info.plist.cmake" ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
-    install(FILES "${CMAKE_SOURCE_DIR}/share/macosx/embedded.provisionprofile" DESTINATION ${BUNDLE_INSTALL_DIR})
+    # A fork must use its own signing profile, never the upstream profile.
     set(MACOSX_BUNDLE_RESOURCE_FILES
-            "${CMAKE_SOURCE_DIR}/share/macosx/Assets.car"
             "${CMAKE_SOURCE_DIR}/share/macosx/keepassxc.icns"
     )
     set_target_properties(${PROGNAME} PROPERTIES

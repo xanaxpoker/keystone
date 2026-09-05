@@ -17,7 +17,7 @@
   <key>CFBundleIconName</key>
   <string>keepassxc</string>
   <key>CFBundleIdentifier</key>
-  <string>org.keepassxc.keepassxc</string>
+  <string>app.keystone.passwords</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
@@ -44,7 +44,7 @@
         <key>CFBundleTypeIconFile</key>
         <string>keepassxc.icns</string>
         <key>CFBundleTypeName</key>
-        <string>KeePassXC Password Database</string>
+        <string>KeePass Password Database</string>
         <key>CFBundleTypeOSTypes</key>
         <array>
           <string>kdbx</string>
