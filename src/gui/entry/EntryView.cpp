@@ -65,17 +65,17 @@ public:
         textRect = QStyle::visualRect(option.direction, option.rect, textRect);
         const auto alignment = Qt::AlignVCenter
             | (option.direction == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
-        auto titleFont = option.font;
+        auto titleFont = panel.font;
         titleFont.setWeight(QFont::DemiBold);
         painter->setFont(titleFont);
-        painter->setPen(option.palette.color(QPalette::Text));
+        painter->setPen(panel.palette.color(QPalette::Text));
         const int halfHeight = textRect.height() / 2;
         painter->drawText(QRect(textRect.x(), textRect.y(), textRect.width(), halfHeight), alignment,
                           QFontMetrics(titleFont).elidedText(title, Qt::ElideRight, textRect.width()));
-        auto subtitleFont = option.font;
+        auto subtitleFont = panel.font;
         subtitleFont.setPointSizeF(qMax(9.0, subtitleFont.pointSizeF() - 1.0));
         painter->setFont(subtitleFont);
-        painter->setPen(option.palette.color(QPalette::PlaceholderText));
+        painter->setPen(panel.palette.color(QPalette::PlaceholderText));
         painter->drawText(QRect(textRect.x(), textRect.y() + halfHeight, textRect.width(), halfHeight), alignment,
                           QFontMetrics(subtitleFont).elidedText(username, Qt::ElideRight, textRect.width()));
         painter->restore();
