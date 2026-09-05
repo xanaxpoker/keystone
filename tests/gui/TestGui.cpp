@@ -201,6 +201,7 @@ void TestGui::testKeystoneLayout()
         sample->setGroup(m_db->rootGroup());
         sample->setTitle(name);
         sample->setUsername("alex@example.com");
+        sample->setUrl(QString("https://%1.%2").arg(QString(name).toLower(), QString(name) == "Proton" ? "me" : "com"));
         sample->setPassword("fixture-password-only");
     }
     clickIndex(view->indexFromEntry(entry), view, Qt::LeftButton);

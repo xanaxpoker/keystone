@@ -199,5 +199,10 @@
         <file>application/scalable/actions/keystone-copy.svg</file>
         <file>application/scalable/actions/keystone-star.svg</file>
         <file>application/scalable/actions/keystone-shield-check.svg</file>
+        <file>application/scalable/actions/service-apple.svg</file>
+        <file>application/scalable/actions/service-figma.svg</file>
+        <file>application/scalable/actions/service-github.svg</file>
+        <file>application/scalable/actions/service-notion.svg</file>
+        <file>application/scalable/actions/service-slack.svg</file>
     </qresource>
 </RCC>

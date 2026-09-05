@@ -313,7 +313,7 @@ void EntryPreviewWidget::updateEntryHeaderLine()
     const QString title = m_currentEntry->resolveMultiplePlaceholders(m_currentEntry->title());
     m_ui->entryTitleLabel->setRawText(title);
     m_ui->entryTitleLabel->setToolTip(hierarchy(m_currentEntry->group(), title));
-    if (m_currentEntry->iconUuid().isNull() && m_currentEntry->iconNumber() == 0) {
+    if (m_currentEntry->iconUuid().isNull() && m_currentEntry->iconNumber() == 0 && Icons::serviceIconName(m_currentEntry).isEmpty()) {
         m_ui->entryIcon->setPixmap(QPixmap());
         m_ui->entryIcon->setText(title.left(1).toUpper());
     } else {

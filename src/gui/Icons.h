@@ -36,6 +36,7 @@ public:
 
     static QPixmap customIconPixmap(const Database* db, const QUuid& uuid, IconSize size = IconSize::Default);
     static QHash<QUuid, QPixmap> customIconsPixmaps(const Database* db, IconSize size = IconSize::Default);
+    static QString serviceIconName(const Entry* entry);
     static QPixmap entryIconPixmap(const Entry* entry, IconSize size = IconSize::Default);
     static QPixmap groupIconPixmap(const Group* group, IconSize size = IconSize::Default);
 

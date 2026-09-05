@@ -23,6 +23,7 @@
 #include <QImageReader>
 #include <QPaintDevice>
 #include <QPainter>
+#include <QUrl>
 
 #include "config-keepassx.h"
 #include "core/Config.h"
@@ -236,11 +237,27 @@ QHash<QUuid, QPixmap> Icons::customIconsPixmaps(const Database* db, IconSize siz
     return result;
 }
 
+QString Icons::serviceIconName(const Entry* entry)
+{
+    // Offline display assets only. Never issue a request for a vault URL.
+    if (!entry || !entry->iconUuid().isNull() || entry->iconNumber() != 0) return {};
+    const auto host = QUrl::fromUserInput(entry->url()).host().toLower();
+    const QMap<QString, QString> brands{{"apple.com", "service-apple"}, {"figma.com", "service-figma"},
+        {"github.com", "service-github"}, {"notion.so", "service-notion"}, {"notion.com", "service-notion"},
+        {"slack.com", "service-slack"}, {"proton.me", "proton"}};
+    for (auto it = brands.constBegin(); it != brands.constEnd(); ++it) {
+        if (host == it.key() || host.endsWith("." + it.key())) return it.value();
+    }
+    return {};
+}
+
 QPixmap Icons::entryIconPixmap(const Entry* entry, IconSize size)
 {
     QPixmap icon(size, size);
     if (entry->iconUuid().isNull()) {
-        icon = databaseIcons()->icon(entry->iconNumber(), size);
+        const auto service = serviceIconName(entry);
+        icon = service.isEmpty() ? databaseIcons()->icon(entry->iconNumber(), size)
+                                 : icons()->icon(service).pixmap(128, 128);
     } else {
         if (entry->database()) {
             icon = Icons::customIconPixmap(entry->database(), entry->iconUuid(), size);

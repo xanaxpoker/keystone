@@ -291,7 +291,7 @@ QVariant EntryModel::data(const QModelIndex& index, int role) const
             }
             break;
         case Title:
-            if (entry->iconUuid().isNull() && entry->iconNumber() == 0 && !entry->isExpired()) return QIcon();
+            if (entry->iconUuid().isNull() && entry->iconNumber() == 0 && !entry->isExpired() && Icons::serviceIconName(entry).isEmpty()) return QIcon();
             return Icons::entryIconPixmap(entry);
         case Paperclip:
             if (!entry->attachments()->isEmpty()) {
