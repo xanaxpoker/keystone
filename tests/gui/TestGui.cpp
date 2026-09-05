@@ -29,6 +29,7 @@
 #include <QSpinBox>
 #include <QTest>
 #include <QToolBar>
+#include <QToolButton>
 
 #include "config-keepassx-tests.h"
 #include "core/PasswordHealth.h"
@@ -514,6 +515,7 @@ void TestGui::testTabs()
 
 void TestGui::testEditEntry()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     entryView->setFocus();
@@ -665,6 +667,7 @@ void TestGui::testEditEntry()
 
 void TestGui::testSearchEditEntry()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     // Regression test for Issue #1447 -- Uses example from issue description
 
     // Find buttons for group creation
@@ -716,6 +719,7 @@ void TestGui::testSearchEditEntry()
 
 void TestGui::testAddEntry()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     // Given the status bar label with initial number of entries.
@@ -839,6 +843,7 @@ void TestGui::testPasswordEntryEntropy_data()
 
 void TestGui::testPasswordEntryEntropy()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
 
     // Find the new entry action
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
@@ -900,6 +905,7 @@ void TestGui::testPasswordEntryEntropy()
 
 void TestGui::testDicewareEntryEntropy()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
 
     // Find the new entry action
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
@@ -965,6 +971,7 @@ void TestGui::testDicewareEntryEntropy()
 
 void TestGui::testTotp()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     QCOMPARE(entryView->model()->rowCount(), 1);
@@ -1035,6 +1042,7 @@ void TestGui::testTotp()
 
 void TestGui::testSearch()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     // Add canned entries for consistent testing
     addCannedEntries();
 
@@ -1268,6 +1276,7 @@ void TestGui::testSearch()
 
 void TestGui::testDeleteEntry()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     // Add canned entries for consistent testing
     addCannedEntries();
     checkStatusBarText("4 Ent");
@@ -1390,6 +1399,7 @@ void TestGui::testCloneEntry()
 
 void TestGui::testEntryPlaceholders()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     // Find the new entry action
@@ -1616,6 +1626,7 @@ void TestGui::testSaveBackupPath()
 
 void TestGui::testDatabaseSettings()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     m_db->metadata()->setName("testDatabaseSettings");
     triggerAction("actionDatabaseSettings");
     auto* dbSettingsDialog = m_dbWidget->findChild<QWidget*>("databaseSettingsDialog");
@@ -2037,6 +2048,7 @@ void TestGui::testTrayRestoreHide()
 
 void TestGui::testAutoType()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     // Clear entries from root group to guarantee order
     for (Entry* entry : m_db->rootGroup()->entries()) {
         m_db->rootGroup()->removeEntry(entry);
@@ -2338,6 +2350,7 @@ void TestGui::testMenuActionStates()
 
 void TestGui::addCannedEntries()
 {
+    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     // Find buttons
     QWidget* entryNewWidget = toolBar->widgetForAction(m_mainWindow->findChild<QAction*>("actionEntryNew"));
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
