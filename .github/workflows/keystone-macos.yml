@@ -1,6 +1,12 @@
 name: Keystone macOS
 on:
   workflow_dispatch:
+    inputs:
+      architecture:
+        description: Mac architecture to build
+        type: choice
+        default: both
+        options: [both, arm64, x86_64]
   push:
     branches: [keystone-ui]
 permissions:
@@ -10,28 +16,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: macos-14
-            arch: arm64
-            triplet: arm64-osx-dynamic-release
-            target: '11.0'
-          - runner: macos-15-intel
-            arch: x86_64
-            triplet: x64-osx-dynamic-release
-            target: '10.15'
-    runs-on: ${{ matrix.runner }}
+        arch: ${{ fromJSON(inputs.architecture == 'arm64' && '["arm64"]' || inputs.architecture == 'x86_64' && '["x86_64"]' || '["arm64","x86_64"]') }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'macos-14' || 'macos-15-intel' }}
     timeout-minutes: 180
     env:
       VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg-cache,readwrite
-      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.target }}
+      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.arch == 'arm64' && '11.0' || '10.15' }}
+      VCPKG_TRIPLET: ${{ matrix.arch == 'arm64' && 'arm64-osx-dynamic-release' || 'x64-osx-dynamic-release' }}
     steps:
       - uses: actions/checkout@v4
       - name: Cache dependencies
         uses: actions/cache/restore@v4
         with:
           path: vcpkg-cache
-          key: vcpkg-native-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-${{ github.run_id }}
-          restore-keys: vcpkg-native-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-
+          key: vcpkg-native-${{ env.VCPKG_TRIPLET }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-${{ github.run_id }}
+          restore-keys: vcpkg-native-${{ env.VCPKG_TRIPLET }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-
       - name: Build tools
         run: brew install ninja automake autoconf autoconf-archive libtool pkg-config
       - name: Verify packaging checks
@@ -46,10 +45,10 @@ jobs:
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
-            -DVCPKG_HOST_TRIPLET=${{ matrix.triplet }} \
+            -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_TRIPLET }} \
+            -DVCPKG_HOST_TRIPLET=${{ env.VCPKG_TRIPLET }} \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }} \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ matrix.target }} \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ env.MACOSX_DEPLOYMENT_TARGET }} \
             -DWITH_XC_ALL=ON -DWITH_XC_DOCS=OFF -DWITH_XC_UPDATECHECK=OFF \
             -DWITH_TESTS=ON -DWITH_GUI_TESTS=ON -DWITH_XC_NETWORKING=ON \
             -DKEEPASSXC_BUILD_TYPE=Release
@@ -58,7 +57,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: vcpkg-cache
-          key: vcpkg-native-${{ matrix.triplet }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-${{ github.run_id }}
+          key: vcpkg-native-${{ env.VCPKG_TRIPLET }}-${{ hashFiles('vcpkg.json', 'vcpkg/triplets/*') }}-${{ github.run_id }}
       - name: Compile
         run: cmake --build build --parallel 3
       - name: Test
