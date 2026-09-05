@@ -194,5 +194,10 @@
         <file>badges/0_ShareActive.svg</file>
         <file>badges/1_ShareInactive.svg</file>
         <file>badges/2_Expired.svg</file>
+        <file>application/scalable/actions/keystone-dots.svg</file>
+        <file>application/scalable/actions/keystone-plus.svg</file>
+        <file>application/scalable/actions/keystone-copy.svg</file>
+        <file>application/scalable/actions/keystone-star.svg</file>
+        <file>application/scalable/actions/keystone-shield-check.svg</file>
     </qresource>
 </RCC>

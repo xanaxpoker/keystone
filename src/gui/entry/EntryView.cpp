@@ -59,21 +59,30 @@ public:
         const auto bounds = option.rect.adjusted(12, 6, -12, -6);
         auto iconRect = QRect(bounds.left(), bounds.center().y() - 14, 28, 28);
         iconRect = QStyle::visualRect(option.direction, option.rect, iconRect);
-        icon.paint(painter, iconRect, Qt::AlignCenter,
-                   option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled);
+        if (icon.isNull()) {
+            auto initialFont = panel.font;
+            initialFont.setPointSizeF(20);
+            painter->setFont(initialFont);
+            painter->setPen(panel.palette.color(QPalette::PlaceholderText));
+            painter->drawText(iconRect, Qt::AlignCenter, title.left(1).toUpper());
+        } else {
+            icon.paint(painter, iconRect, Qt::AlignCenter,
+                       option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled);
+        }
         auto textRect = bounds.adjusted(40, 0, 0, 0);
         textRect = QStyle::visualRect(option.direction, option.rect, textRect);
         const auto alignment = Qt::AlignVCenter
             | (option.direction == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
         auto titleFont = panel.font;
-        titleFont.setWeight(QFont::DemiBold);
+        titleFont.setWeight(QFont::Normal);
+        titleFont.setPointSizeF(15);
         painter->setFont(titleFont);
         painter->setPen(panel.palette.color(QPalette::Text));
         const int halfHeight = textRect.height() / 2;
         painter->drawText(QRect(textRect.x(), textRect.y(), textRect.width(), halfHeight), alignment,
                           QFontMetrics(titleFont).elidedText(title, Qt::ElideRight, textRect.width()));
         auto subtitleFont = panel.font;
-        subtitleFont.setPointSizeF(qMax(9.0, subtitleFont.pointSizeF() - 1.0));
+        subtitleFont.setPointSizeF(12);
         painter->setFont(subtitleFont);
         painter->setPen(panel.palette.color(QPalette::PlaceholderText));
         painter->drawText(QRect(textRect.x(), textRect.y() + halfHeight, textRect.width(), halfHeight), alignment,
@@ -84,7 +93,7 @@ public:
     QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
     {
         auto size = QStyledItemDelegate::sizeHint(option, index);
-        size.setHeight(qMax(size.height(), option.fontMetrics.height() * 2 + 20));
+        size.setHeight(qMax(size.height(), 68));
         return size;
     }
 };
@@ -136,6 +145,7 @@ EntryView::EntryView(QWidget* parent)
     connect(m_sortModel, &QAbstractItemModel::dataChanged, this, [this] { viewport()->update(); });
     QTreeView::setItemDelegateForColumn(EntryModel::PasswordStrength, new PasswordStrengthItemDelegate(this));
 
+    setHeaderHidden(true);
     setUniformRowHeights(true);
     setRootIsDecorated(false);
     setAlternatingRowColors(false);

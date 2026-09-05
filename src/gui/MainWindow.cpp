@@ -109,20 +109,23 @@ MainWindow::MainWindow()
     }
 
     // Setup the search widget in the toolbar
-    m_searchWidget = new SearchWidget();
+    m_searchWidget = new SearchWidget(this);
     m_searchWidget->connectSignals(m_actionMultiplexer);
-    m_searchWidgetAction = m_ui->toolBar->addWidget(m_searchWidget);
+    m_searchWidgetAction = new QAction(this);
+    m_searchWidget->hide();
+    m_ui->toolBar->hide();
+    statusBar()->hide();
     m_searchWidgetAction->setEnabled(false);
 
     new QShortcut(QKeySequence::Find, this, SLOT(focusSearchWidget()));
 
     connect(m_searchWidget, &SearchWidget::searchCanceled, this, [this] {
         m_ui->toolBar->setExpanded(false);
-        m_ui->toolBar->setVisible(!config()->get(Config::GUI_HideToolbar).toBool());
+        m_ui->toolBar->hide();
     });
     connect(m_searchWidget, &SearchWidget::lostFocus, this, [this] {
         m_ui->toolBar->setExpanded(false);
-        m_ui->toolBar->setVisible(!config()->get(Config::GUI_HideToolbar).toBool());
+        m_ui->toolBar->hide();
     });
 
     m_countDefaultAttributes = m_ui->menuEntryCopyAttribute->actions().size();
@@ -482,6 +485,20 @@ MainWindow::MainWindow()
     m_actionMultiplexer.connect(SIGNAL(databaseModified()), this, SLOT(updateEntryCountLabel()));
     m_actionMultiplexer.connect(SIGNAL(searchModeActivated()), this, SLOT(updateEntryCountLabel()));
     m_actionMultiplexer.connect(SIGNAL(listModeActivated()), this, SLOT(updateEntryCountLabel()));
+
+    // Keep one upstream search controller, hosted inside the active vault's list.
+    // removeTab emits activeDatabaseChanged before the old DatabaseWidget is deleted.
+    connect(m_ui->tabWidget, &DatabaseTabWidget::activeDatabaseChanged, this, [this](DatabaseWidget* db) {
+        m_searchWidget->setParent(this);
+        m_searchWidget->hide();
+        if (db) {
+            auto host = db->findChild<QWidget*>("keystoneSearchHost");
+            if (host) {
+                host->layout()->addWidget(m_searchWidget);
+                m_searchWidget->show();
+            }
+        }
+    });
 
     // Notify search when the active database changes or gets locked
     connect(m_ui->tabWidget,
@@ -1086,6 +1103,7 @@ void MainWindow::updateMenuActionState()
 #endif
 
     m_searchWidgetAction->setEnabled(inDatabase);
+    m_searchWidget->setEnabled(inDatabase);
 }
 
 void MainWindow::updateToolbarSeparatorVisibility()
@@ -1513,8 +1531,7 @@ bool MainWindow::focusNextPrevChild(bool next)
 void MainWindow::focusSearchWidget()
 {
     if (m_searchWidgetAction->isEnabled()) {
-        m_ui->toolBar->setVisible(true);
-        m_ui->toolBar->setExpanded(true);
+        m_searchWidget->show();
         m_searchWidget->focusSearch();
     }
 }
@@ -1709,7 +1726,7 @@ void MainWindow::applySettingsChanges()
     // so force height of 0 instead and use maximumHeight() > 0 instead of isVisible() elsewhere
     m_ui->menubar->setMaximumHeight(hideMenubar ? 0 : QWIDGETSIZE_MAX);
 
-    m_ui->toolBar->setHidden(config()->get(Config::GUI_HideToolbar).toBool());
+    m_ui->toolBar->hide();
     auto movable = config()->get(Config::GUI_MovableToolbar).toBool();
     m_ui->toolBar->setMovable(movable);
     if (!movable) {

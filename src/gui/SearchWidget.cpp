@@ -23,6 +23,7 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QToolButton>
 
 #include "core/SignalMultiplexer.h"
@@ -80,6 +81,8 @@ SearchWidget::SearchWidget(QWidget* parent)
     m_ui->searchIcon->setIcon(icons()->icon("system-search"));
     m_ui->searchEdit->addAction(m_ui->searchIcon, QLineEdit::LeadingPosition);
 
+    m_ui->searchEdit->setPlaceholderText(tr("Search passwords"));
+    m_ui->helpIcon->setVisible(false);
     m_ui->helpIcon->setIcon(icons()->icon("system-help"));
     m_ui->searchEdit->addAction(m_ui->helpIcon, QLineEdit::TrailingPosition);
 
@@ -268,8 +271,13 @@ void SearchWidget::performRequestedSearch(const QString& text)
 {
     // This method handles saved searches - it should set the text and immediately trigger search
     // without any delay, regardless of the "Press Enter to search" setting
-    m_ui->searchEdit->setText(text);
-    m_ui->saveIcon->setVisible(!text.isEmpty());
+    m_searchTimer->stop();
+    {
+        QSignalBlocker blocker(m_ui->searchEdit);
+        const bool collection = text == "*" || text == "tag:Favorite" || text == "has:totp";
+        m_ui->searchEdit->setText(collection ? QString() : text);
+        m_ui->saveIcon->setVisible(!collection && !text.isEmpty());
+    }
     emit search(text);
 }
 

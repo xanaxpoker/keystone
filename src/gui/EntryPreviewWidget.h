@@ -46,6 +46,9 @@ public slots:
 
 signals:
     void entryUrlActivated(Entry* entry);
+    void editRequested();
+    void copyUsernameRequested();
+    void copyPasswordRequested();
     void copyTextRequested(const QString& text);
 
 protected:

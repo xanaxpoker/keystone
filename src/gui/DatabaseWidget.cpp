@@ -28,6 +28,12 @@
 #include <QPlainTextEdit>
 #include <QProcess>
 #include <QSplitter>
+#include <QButtonGroup>
+#include <QPushButton>
+#include <QToolButton>
+#include <QMenu>
+#include <QHeaderView>
+#include "gui/Icons.h"
 #include <QTextDocumentFragment>
 #include <QTextEdit>
 
@@ -126,26 +132,75 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     tagsLayout->setMargin(0);
 
     m_groupSplitter->setObjectName("vaultSidebar");
-    m_groupSplitter->setMinimumWidth(170);
+    m_groupSplitter->setMinimumWidth(190);
     m_groupSplitter->setOrientation(Qt::Vertical);
-    m_groupSplitter->setChildrenCollapsible(true);
+    m_groupSplitter->setHandleWidth(1);
     auto vaultGroups = new QWidget(this);
     vaultGroups->setObjectName("vaultGroups");
+    vaultGroups->setAttribute(Qt::WA_StyledBackground, true);
     auto vaultLayout = new QVBoxLayout(vaultGroups);
-    vaultLayout->setContentsMargins(12, 16, 8, 0);
+    vaultLayout->setContentsMargins(12, 26, 12, 16);
+    vaultLayout->setSpacing(4);
     auto brandLabel = new QLabel(tr("Keystone"), vaultGroups);
     brandLabel->setObjectName("keystoneBrand");
-    auto vaultLabel = new QLabel(tr("VAULT"), vaultGroups);
-    vaultLabel->setObjectName("vaultSectionLabel");
     vaultLayout->addWidget(brandLabel);
-    vaultLayout->addSpacing(20);
-    vaultLayout->addWidget(vaultLabel);
-    vaultLayout->addWidget(m_groupView);
+    vaultLayout->addSpacing(30);
+    auto navigation = new QButtonGroup(this);
+    navigation->setExclusive(true);
+    const QStringList names{tr("Passwords"), tr("Favorites"), tr("Codes"), tr("Trash")};
+    const QStringList iconNames{"lock", "keystone-star", "keystone-shield-check", "trash"};
+    for (int i = 0; i < names.size(); ++i) {
+        auto button = new QPushButton(icons()->icon(iconNames[i]), names[i], vaultGroups);
+        button->setObjectName(QString("collection%1").arg(i));
+        button->setProperty("navigation", true);
+        button->setCheckable(true);
+        button->setChecked(i == 0);
+        navigation->addButton(button, i);
+        vaultLayout->addWidget(button);
+        connect(button, &QPushButton::clicked, this, [this, i, names] {
+            auto title = findChild<QLabel*>("keystoneListTitle");
+            if (title) title->setText(names[i]);
+            if (i == 3) {
+                emit requestSearch(QString());
+                auto trash = m_db->metadata()->recycleBin();
+                m_groupView->setCurrentGroup(trash ? trash : m_db->rootGroup());
+                if (!trash) m_entryView->displaySearch({});
+            } else {
+                m_groupView->setCurrentGroup(m_db->rootGroup());
+                emit requestSearch(i == 0 ? "*" : i == 1 ? "tag:Favorite" : "has:totp");
+            }
+            m_searchingLabel->hide();
+        });
+    }
+    vaultLayout->addStretch();
+    auto vaultButton = new QToolButton(vaultGroups);
+    vaultButton->setObjectName("keystoneVaultButton");
+    vaultButton->setText(tr("Personal\nLocal vault"));
+    vaultButton->setIcon(icons()->icon("database-lock"));
+    vaultButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    vaultButton->setPopupMode(QToolButton::InstantPopup);
+    auto vaultMenu = new QMenu(vaultButton);
+    auto foldersAction = vaultMenu->addAction(tr("Folders and saved searches"));
+    foldersAction->setCheckable(true);
+    vaultMenu->addAction(tr("Vault settings…"), this, SLOT(switchToDatabaseSettings()));
+    vaultMenu->addAction(tr("Security report…"), this, SLOT(switchToDatabaseReports()));
+    vaultMenu->addSeparator();
+    vaultMenu->addAction(tr("Lock vault"), this, SIGNAL(databaseLockRequested()));
+    vaultButton->setMenu(vaultMenu);
+    vaultLayout->addWidget(vaultButton);
+    auto advancedSidebar = new QWidget(this);
+    auto advancedLayout = new QVBoxLayout(advancedSidebar);
+    advancedLayout->setContentsMargins(8, 0, 8, 0);
+    advancedLayout->addWidget(m_groupView);
+    advancedLayout->addWidget(tagsWidget);
     m_groupSplitter->addWidget(vaultGroups);
-    m_groupSplitter->addWidget(tagsWidget);
-    m_groupSplitter->setStretchFactor(0, 100);
-    m_groupSplitter->setStretchFactor(1, 0);
-    m_groupSplitter->setSizes({1, 1});
+    m_groupSplitter->addWidget(advancedSidebar);
+    advancedSidebar->hide();
+    connect(foldersAction, &QAction::toggled, advancedSidebar, &QWidget::setVisible);
+    connect(foldersAction, &QAction::toggled, this, [this](bool expanded) {
+        if (expanded) m_groupSplitter->setSizes({height() / 2, height() / 2});
+    });
+    m_groupSplitter->setStretchFactor(0, 1);
     // Initial visibility based on config value
     m_groupSplitter->setVisible(!config()->get(Config::GUI_HideGroupPanel).toBool());
 
@@ -165,7 +220,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     m_mainSplitter->addWidget(rightHandSideWidget);
     m_mainSplitter->setStretchFactor(0, 0);
     m_mainSplitter->setStretchFactor(1, 100);
-    m_mainSplitter->setSizes({1, 1});
+    m_mainSplitter->setSizes({240, 960});
 
     m_previewSplitter->setOrientation(Qt::Horizontal);
     m_previewSplitter->setChildrenCollapsible(true);
@@ -193,14 +248,38 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
 #endif
 
     m_previewView->setObjectName("previewWidget");
-    m_previewView->setMinimumWidth(340);
+    m_previewView->setMinimumWidth(360);
     m_entryView->setMinimumWidth(250);
     m_previewView->hide();
-    m_previewSplitter->addWidget(m_entryView);
+    auto entryPane = new QWidget(this);
+    entryPane->setObjectName("keystoneEntryPane");
+    auto entryLayout = new QVBoxLayout(entryPane);
+    entryLayout->setContentsMargins(10, 24, 10, 12);
+    entryLayout->setSpacing(18);
+    auto searchRow = new QHBoxLayout();
+    searchRow->setSpacing(6);
+    auto searchHost = new QWidget(entryPane);
+    searchHost->setObjectName("keystoneSearchHost");
+    auto searchLayout = new QVBoxLayout(searchHost);
+    searchLayout->setContentsMargins(0, 0, 0, 0);
+    searchRow->addWidget(searchHost, 1);
+    auto addButton = new QToolButton(entryPane);
+    addButton->setObjectName("keystoneAddEntry");
+    addButton->setIcon(icons()->icon("keystone-plus"));
+    addButton->setToolTip(tr("New password"));
+    addButton->setAccessibleName(tr("New password"));
+    connect(addButton, &QToolButton::clicked, this, &DatabaseWidget::createEntry);
+    searchRow->addWidget(addButton);
+    entryLayout->addLayout(searchRow);
+    auto listTitle = new QLabel(tr("Passwords"), entryPane);
+    listTitle->setObjectName("keystoneListTitle");
+    entryLayout->addWidget(listTitle);
+    entryLayout->addWidget(m_entryView, 1);
+    m_previewSplitter->addWidget(entryPane);
     m_previewSplitter->addWidget(m_previewView);
-    m_previewSplitter->setStretchFactor(0, 100);
-    m_previewSplitter->setStretchFactor(1, 0);
-    m_previewSplitter->setSizes({1, 1});
+    m_previewSplitter->setStretchFactor(0, 0);
+    m_previewSplitter->setStretchFactor(1, 100);
+    m_previewSplitter->setSizes({312, 648});
 
     m_editEntryWidget->setObjectName("editEntryWidget");
     m_historyEditEntryWidget->setObjectName("editEntryHistoryWidget");
@@ -223,6 +302,9 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     connect(m_previewSplitter, SIGNAL(splitterMoved(int,int)), SIGNAL(splitterSizesChanged()));
     connect(this, SIGNAL(currentModeChanged(DatabaseWidget::Mode)), m_previewView, SLOT(setDatabaseMode(DatabaseWidget::Mode)));
     connect(m_previewView, SIGNAL(entryUrlActivated(Entry*)), SLOT(openUrlForEntry(Entry*)));
+    connect(m_previewView, &EntryPreviewWidget::editRequested, this, qOverload<>(&DatabaseWidget::switchToEntryEdit));
+    connect(m_previewView, &EntryPreviewWidget::copyUsernameRequested, this, &DatabaseWidget::copyUsername);
+    connect(m_previewView, &EntryPreviewWidget::copyPasswordRequested, this, &DatabaseWidget::copyPassword);
     connect(m_previewView, SIGNAL(copyTextRequested(const QString&)), SLOT(setClipboardTextAndMinimize(const QString&)));
     connect(m_entryView, SIGNAL(viewStateChanged()), SIGNAL(entryViewStateChanged()));
     connect(m_groupView, SIGNAL(groupSelectionChanged()), SLOT(onGroupChanged()));
@@ -416,7 +498,7 @@ void DatabaseWidget::setSplitterSizes(const QHash<Config::ConfigKey, QList<int>>
             break;
         case Config::GUI_PreviewSplitterState:
             if (value.size() < 2) {
-                value = QList({static_cast<int>(width() * 0.38), static_cast<int>(width() * 0.42)});
+                value = QList({static_cast<int>(width() * 0.26), static_cast<int>(width() * 0.54)});
             }
             m_previewSplitter->setSizes(value);
             break;

@@ -14,13 +14,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="leftMargin">
-    <number>16</number>
-   </property>
    <property name="topMargin">
-    <number>16</number>
-   </property>
-   <property name="rightMargin">
     <number>16</number>
    </property>
    <property name="bottomMargin">
@@ -32,7 +26,7 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="pageEntry">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="keystoneDetailLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -45,160 +39,210 @@
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
-        <layout class="QVBoxLayout" name="entryHorizontalLayout">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-         <property name="leftMargin">
-          <number>5</number>
-         </property>
-         <property name="topMargin">
-          <number>3</number>
-         </property>
-         <property name="bottomMargin">
-          <number>3</number>
-         </property>
+        <layout class="QHBoxLayout" name="keystoneDetailActions">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="spacing">
-            <number>12</number>
+          <spacer name="keystoneActionSpace">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <item>
-            <widget class="QLabel" name="entryIcon">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>16</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string />
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ElidedLabel" name="entryTitleLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
-             </property>
-             <property name="textFormat">
-              <enum>Qt::PlainText</enum>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="keystoneDetailActions">
-           <item>
-            <widget class="QWidget" name="entryTotp" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <property name="spacing">
-               <number>0</number>
+          <widget class="QPushButton" name="keystoneEdit">
+           <property name="text">
+            <string>Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="keystoneMore">
+           <property name="toolTip">
+            <string>More options</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="entryCloseButton">
+           <property name="toolTip">
+            <string>Close</string>
+           </property>
+           <property name="text">
+            <string />
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="keystoneHeadingSpace">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="entryIcon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string />
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ElidedLabel" name="entryTitleLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="keystoneDomain">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="keystoneFieldsSpace">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint">
+          <size>
+           <width>0</width>
+           <height>42</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="keystoneTotpLayout">
+         <item>
+          <widget class="QToolButton" name="entryTotpButton">
+           <property name="toolTip">
+            <string>Display current TOTP value</string>
+           </property>
+           <property name="text">
+            <string />
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="entryTotp" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="entryTotpLabel">
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
               </property>
-              <property name="leftMargin">
-               <number>0</number>
+              <property name="toolTip">
+               <string>Double click to copy to clipboard</string>
               </property>
-              <property name="topMargin">
-               <number>0</number>
+              <property name="text">
+               <string notr="true">1234567</string>
               </property>
-              <property name="rightMargin">
-               <number>0</number>
+              <property name="textInteractionFlags">
+               <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
               </property>
-              <property name="bottomMargin">
-               <number>0</number>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="entryTotpProgress">
+              <property name="maximumSize">
+               <size>
+                <width>57</width>
+                <height>4</height>
+               </size>
               </property>
-              <item>
-               <widget class="QLabel" name="entryTotpLabel">
-                <property name="font">
-                 <font>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="toolTip">
-                 <string>Double click to copy to clipboard</string>
-                </property>
-                <property name="text">
-                 <string notr="true">1234567</string>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QProgressBar" name="entryTotpProgress">
-                <property name="maximumSize">
-                 <size>
-                  <width>57</width>
-                  <height>4</height>
-                 </size>
-                </property>
-                <property name="value">
-                 <number>50</number>
-                </property>
-                <property name="textVisible">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="entryTotpButton">
-             <property name="toolTip">
-              <string>Display current TOTP value</string>
-             </property>
-             <property name="text">
-              <string />
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="entryCloseButton">
-             <property name="toolTip">
-              <string>Close</string>
-             </property>
-             <property name="text">
-              <string />
-             </property>
-            </widget>
-           </item>
-          </layout>
+              <property name="value">
+               <number>50</number>
+              </property>
+              <property name="textVisible">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </item>
@@ -239,87 +283,220 @@
               <property name="horizontalSpacing">
                <number>8</number>
               </property>
-              <property name="verticalSpacing">
-               <number>20</number>
-              </property>
-              <item row="1" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <widget class="QToolButton" name="togglePasswordButton">
-                  <property name="text">
-                   <string notr="true" />
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>14</width>
-                    <height>14</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QScrollArea" name="passwordScrollArea">
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Plain</enum>
-                  </property>
-                  <property name="verticalScrollBarPolicy">
-                   <enum>Qt::ScrollBarAlwaysOff</enum>
-                  </property>
-                  <property name="sizeAdjustPolicy">
-                   <enum>QAbstractScrollArea::AdjustToContents</enum>
-                  </property>
-                  <property name="widgetResizable">
-                   <bool>true</bool>
-                  </property>
-                  <widget class="QWidget" name="scrollAreaWidgetContents">
-                   <property name="geometry">
-                    <rect>
-                     <x>0</x>
-                     <y>0</y>
-                     <width>157</width>
-                     <height>63</height>
-                    </rect>
+              <item row="0" column="0" colspan="2">
+               <widget class="QWidget" name="keystoneCredentialFields">
+                <layout class="QGridLayout" name="keystoneCredentialLayout">
+                 <property name="leftMargin">
+                  <number>16</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>16</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>16</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>16</number>
+                 </property>
+                 <property name="verticalSpacing">
+                  <number>20</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="entryUsernameTitleLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_8">
-                    <property name="leftMargin">
-                     <number>6</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="QLabel" name="entryPasswordLabel">
-                      <property name="focusPolicy">
-                       <enum>Qt::ClickFocus</enum>
-                      </property>
-                      <property name="text">
-                       <string notr="true">TextLabel</string>
-                      </property>
-                      <property name="textInteractionFlags">
-                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                      </property>
-                      <property name="blendIn" stdset="0">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Username</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
-                 </widget>
-                </item>
-               </layout>
+                 </item>
+                 <item row="0" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <property name="spacing">
+                    <number>8</number>
+                   </property>
+                   <item>
+                    <widget class="QToolButton" name="toggleUsernameButton">
+                     <property name="text">
+                      <string />
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>14</width>
+                       <height>14</height>
+                      </size>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="entryUsernameLabel">
+                     <property name="minimumSize">
+                      <size>
+                       <width>150</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="focusPolicy">
+                      <enum>Qt::ClickFocus</enum>
+                     </property>
+                     <property name="text">
+                      <string notr="true">username</string>
+                     </property>
+                     <property name="frame">
+                      <bool>false</bool>
+                     </property>
+                     <property name="cursorPosition">
+                      <number>8</number>
+                     </property>
+                     <property name="dragEnabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="readOnly">
+                      <bool>true</bool>
+                     </property>
+                     <property name="blendIn" stdset="0">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="entryPasswordTitleLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Password</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <item>
+                    <widget class="QScrollArea" name="passwordScrollArea">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Plain</enum>
+                     </property>
+                     <property name="verticalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     </property>
+                     <property name="sizeAdjustPolicy">
+                      <enum>QAbstractScrollArea::AdjustToContents</enum>
+                     </property>
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <widget class="QWidget" name="scrollAreaWidgetContents">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>157</width>
+                        <height>63</height>
+                       </rect>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_8">
+                       <property name="leftMargin">
+                        <number>6</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="entryPasswordLabel">
+                         <property name="focusPolicy">
+                          <enum>Qt::ClickFocus</enum>
+                         </property>
+                         <property name="text">
+                          <string notr="true">TextLabel</string>
+                         </property>
+                         <property name="textInteractionFlags">
+                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                         </property>
+                         <property name="blendIn" stdset="0">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QToolButton" name="togglePasswordButton">
+                     <property name="text">
+                      <string notr="true" />
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>14</width>
+                       <height>14</height>
+                      </size>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QToolButton" name="keystoneCopyUsername">
+                   <property name="toolTip">
+                    <string>Copy username</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QToolButton" name="keystoneCopyPassword">
+                   <property name="toolTip">
+                    <string>Copy password</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </item>
               <item row="2" column="1">
                <widget class="ElidedLabel" name="entryUrlLabel">
@@ -355,32 +532,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="entryUsernameTitleLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="text">
-                 <string>Username</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
+              <item row="7" column="0" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
                 <property name="spacing">
                  <number>6</number>
@@ -453,60 +605,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
-                <property name="spacing">
-                 <number>8</number>
-                </property>
-                <item>
-                 <widget class="QToolButton" name="toggleUsernameButton">
-                  <property name="text">
-                   <string />
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>14</width>
-                    <height>14</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="entryUsernameLabel">
-                  <property name="minimumSize">
-                   <size>
-                    <width>150</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="focusPolicy">
-                   <enum>Qt::ClickFocus</enum>
-                  </property>
-                  <property name="text">
-                   <string notr="true">username</string>
-                  </property>
-                  <property name="frame">
-                   <bool>false</bool>
-                  </property>
-                  <property name="cursorPosition">
-                   <number>8</number>
-                  </property>
-                  <property name="dragEnabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="blendIn" stdset="0">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
               <item row="4" column="1">
                <widget class="TagsEdit" name="entryTagsList" native="true">
                 <property name="focusPolicy">
@@ -545,29 +643,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="entryPasswordTitleLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Password</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
+              <item row="6" column="0" colspan="2">
                <widget class="QLabel" name="entryNotesTitleLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -633,6 +709,9 @@
                 </property>
                </widget>
               </item>
+              <property name="verticalSpacing">
+               <number>24</number>
+              </property>
              </layout>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -1234,6 +1313,12 @@
      </widget>
     </widget>
    </item>
+   <property name="leftMargin">
+    <number>40</number>
+   </property>
+   <property name="rightMargin">
+    <number>40</number>
+   </property>
   </layout>
   <action name="searchIcon">
    <property name="text">

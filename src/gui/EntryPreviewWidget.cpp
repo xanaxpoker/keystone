@@ -32,6 +32,10 @@
 
 #include <QScrollBar>
 #include <QTabWidget>
+#include <QTabBar>
+#include <QMenu>
+#include <QUrl>
+#include <QVBoxLayout>
 namespace
 {
     constexpr int GeneralTabIndex = 0;
@@ -49,6 +53,57 @@ EntryPreviewWidget::EntryPreviewWidget(QWidget* parent)
     m_ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground, true);
     m_ui->entryGeneralWidget->setAttribute(Qt::WA_StyledBackground, true);
+
+    m_ui->entryTabWidget->tabBar()->hide();
+    m_ui->entryCloseButton->hide();
+    m_ui->keystoneCopyUsername->setIcon(icons()->icon("keystone-copy"));
+    m_ui->keystoneCopyPassword->setIcon(icons()->icon("keystone-copy"));
+    m_ui->keystoneMore->setIcon(icons()->icon("keystone-dots"));
+    m_ui->entryIcon->setFixedHeight(88);
+    m_ui->entryUsernameLabel->setAlignment(Qt::AlignRight);
+    m_ui->entryPasswordLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    m_ui->entryUrlTitleLabel->setText(tr("Website"));
+    m_ui->entryGeneralWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    m_ui->entryNotesTextEdit->setMaximumHeight(90);
+    auto moreMenu = new QMenu(this);
+    auto favorite = moreMenu->addAction(tr("Add to Favorites"));
+    connect(moreMenu, &QMenu::aboutToShow, this, [this, favorite] {
+        favorite->setText(m_currentEntry && m_currentEntry->tagList().contains("Favorite")
+                          ? tr("Remove from Favorites") : tr("Add to Favorites"));
+    });
+    connect(favorite, &QAction::triggered, this, [this] {
+        if (!m_currentEntry || m_locked) return;
+        if (m_currentEntry->tagList().contains("Favorite")) m_currentEntry->removeTag("Favorite");
+        else m_currentEntry->addTag("Favorite");
+    });
+    auto advanced = moreMenu->addAction(tr("Show advanced details"));
+    advanced->setCheckable(true);
+    const QList<QWidget*> extraFields{m_ui->entryExpirationTitleLabel, m_ui->entryExpirationLabel,
+                                      m_ui->entryTagsTitleLabel, m_ui->entryTagsList};
+    for (auto field : extraFields) field->hide();
+    connect(advanced, &QAction::toggled, this, [this, extraFields](bool checked) {
+        m_ui->entryTabWidget->tabBar()->setVisible(checked);
+        if (!checked) { m_selectedTabEntry = 0; m_ui->entryTabWidget->setCurrentIndex(0); }
+        for (auto field : extraFields) field->setVisible(checked);
+    });
+    m_ui->keystoneMore->setMenu(moreMenu);
+    m_ui->keystoneMore->setPopupMode(QToolButton::InstantPopup);
+    connect(m_ui->keystoneEdit, &QPushButton::clicked, this, &EntryPreviewWidget::editRequested);
+    connect(m_ui->keystoneCopyUsername, &QToolButton::clicked, this, &EntryPreviewWidget::copyUsernameRequested);
+    connect(m_ui->keystoneCopyPassword, &QToolButton::clicked, this, &EntryPreviewWidget::copyPasswordRequested);
+    auto emptyPage = new QWidget(this);
+    emptyPage->setObjectName("keystoneEmptyDetails");
+    auto emptyLayout = new QVBoxLayout(emptyPage);
+    emptyLayout->addStretch();
+    auto emptyTitle = new QLabel(tr("No password selected"), emptyPage);
+    emptyTitle->setObjectName("keystoneEmptyTitle");
+    emptyTitle->setAlignment(Qt::AlignCenter);
+    emptyLayout->addWidget(emptyTitle);
+    auto emptyText = new QLabel(tr("Choose a password to view its details."), emptyPage);
+    emptyText->setAlignment(Qt::AlignCenter);
+    emptyLayout->addWidget(emptyText);
+    emptyLayout->addStretch();
+    m_ui->stackedWidget->addWidget(emptyPage);
 
     // Entry
     m_ui->entryTotpButton->setIcon(icons()->icon("totp"));
@@ -155,7 +210,8 @@ void EntryPreviewWidget::setEntry(Entry* selectedEntry)
     m_currentGroup = nullptr;
 
     if (!m_currentEntry) {
-        hide();
+        m_ui->stackedWidget->setCurrentWidget(findChild<QWidget*>("keystoneEmptyDetails"));
+        setVisible(!m_locked && !config()->get(Config::GUI_HidePreviewPanel).toBool());
         return;
     }
 
@@ -218,7 +274,7 @@ void EntryPreviewWidget::refresh()
 
         setVisible(!config()->get(Config::GUI_HidePreviewPanel).toBool());
 
-        m_ui->stackedWidget->setCurrentWidget(m_ui->pageGroup);
+        m_ui->stackedWidget->setCurrentWidget(findChild<QWidget*>("keystoneEmptyDetails"));
         const int tabIndex =
             m_ui->groupTabWidget->isTabEnabled(m_selectedTabGroup) ? m_selectedTabGroup : GeneralTabIndex;
         Q_ASSERT(m_ui->groupTabWidget->isTabEnabled(GeneralTabIndex));
@@ -252,7 +308,15 @@ void EntryPreviewWidget::updateEntryHeaderLine()
     const QString title = m_currentEntry->resolveMultiplePlaceholders(m_currentEntry->title());
     m_ui->entryTitleLabel->setRawText(title);
     m_ui->entryTitleLabel->setToolTip(hierarchy(m_currentEntry->group(), title));
-    m_ui->entryIcon->setPixmap(Icons::entryIconPixmap(m_currentEntry, IconSize::Large));
+    if (m_currentEntry->iconUuid().isNull() && m_currentEntry->iconNumber() == 0) {
+        m_ui->entryIcon->setPixmap(QPixmap());
+        m_ui->entryIcon->setText(title.left(1).toUpper());
+    } else {
+        m_ui->entryIcon->setText(QString());
+        m_ui->entryIcon->setPixmap(Icons::entryIconPixmap(m_currentEntry, IconSize::Large)
+                                  .scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+    m_ui->keystoneDomain->setText(QUrl(m_currentEntry->resolveMultiplePlaceholders(m_currentEntry->url())).host());
 }
 
 void EntryPreviewWidget::updateEntryTotp()

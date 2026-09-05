@@ -182,12 +182,14 @@ void TestGui::testKeystoneLayout()
     QVERIFY(first.isValid());
     auto* entry = view->entryFromIndex(first);
     QVERIFY(entry);
-    entry->setTitle("Apple Account");
+    entry->setTitle("Notion");
+    entry->setTotp({});
+    entry->setNotes("Personal workspace");
     entry->setUsername("alex@example.com");
-    entry->setUrl("https://apple.com");
+    entry->setUrl("https://notion.so");
     entry->setPassword("fixture-password-only");
     m_db->rootGroup()->setName("Personal");
-    for (const auto& name : {"Figma", "GitHub", "Notion", "Proton Mail", "Slack"}) {
+    for (const auto& name : {"Apple", "Figma", "GitHub", "Proton", "Slack"}) {
         auto* sample = new Entry();
         sample->setUuid(QUuid::createUuid());
         sample->setGroup(m_db->rootGroup());
@@ -204,7 +206,7 @@ void TestGui::testKeystoneLayout()
     for (const auto& theme : {QStringLiteral("light"), QStringLiteral("dark")}) {
         config()->set(Config::GUI_ApplicationTheme, theme);
         qobject_cast<Application*>(qApp)->applyTheme();
-        m_mainWindow->resize(1180, 760);
+        m_mainWindow->resize(1180, 840);
         QApplication::processEvents();
         // The entry and detail panes must be side by side, not overlap or stack.
         QVERIFY(preview->mapTo(m_mainWindow.data(), QPoint()).x()

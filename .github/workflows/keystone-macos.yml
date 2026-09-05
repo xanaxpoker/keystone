@@ -2,13 +2,15 @@ name: Keystone macOS
 on:
   workflow_dispatch:
     inputs:
+      package:
+        description: Create release DMGs (only after UI approval)
+        type: boolean
+        default: false
       architecture:
         description: Mac architecture to build
         type: choice
-        default: both
+        default: arm64
         options: [both, arm64, x86_64]
-  push:
-    branches: [keystone-ui]
 permissions:
   contents: read
 jobs:
@@ -66,15 +68,16 @@ jobs:
           KEYSTONE_CAPTURE_DIR: ${{ github.workspace }}/dist
         run: ctest --test-dir build --output-on-failure --parallel 1
       - name: Package
+        if: inputs.package == true
         run: bash utils/package-keystone-macos.sh '${{ matrix.arch }}'
-      - name: Preserve app for GUI diagnosis
-        if: failure()
+      - name: Preserve app for UI review
+        if: always() && inputs.package != true
         run: |
           if test -d build/src/Keystone.app; then
             cmake --install build --prefix "$PWD/build/diagnostic"
             codesign --force --deep --sign - build/diagnostic/Keystone.app
             mkdir -p diagnostics
-            ditto -c -k --sequesterRsrc --keepParent build/diagnostic/Keystone.app diagnostics/Keystone-diagnostic.zip
+            ditto -c -k --sequesterRsrc --keepParent build/diagnostic/Keystone.app diagnostics/Keystone-UI-preview.zip
           fi
       - name: Upload packages and test results
         if: always()
